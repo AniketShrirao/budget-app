@@ -1,0 +1,18 @@
+.summary-tabs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .summary-table {
+        margin: 0;        
+    }
+
+    .summary-table-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+    }
+}
