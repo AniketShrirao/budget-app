@@ -1,120 +1,115 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, TextField, IconButton, Box, Typography, Button, Alert } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  TextField,
+  IconButton,
+  Box,
+  Typography,
+  Button,
+  Alert,
+} from "@mui/material";
 import { Pencil } from "lucide-react";
-import { Types } from "../data/types";
-import { useSelector } from "react-redux"; 
+import { useSelector, useDispatch } from "react-redux";
+import { updateMonthlySummary, fetchMonthlySummary } from "../features/summarySlice";
 
-// Function to generate fresh categories for each month
-const generateCategories = () => {
-  return Object.values(Types).map((type) => ({
-    name: type,
-    percentage: 100 / Object.keys(Types).length,
-    spent: 0,
-    isModified: false,
-  }));
-};
+const DEFAULT_CATEGORIES = [
+  { name: "Needs", percentage: 20 },
+  { name: "Wants", percentage: 20 },
+  { name: "Investment", percentage: 30 },
+  { name: "Marriage", percentage: 30 },
+];
 
-const BudgetSummaryTable = ({ className, selectedMonth }) => {
-  const [budgets, setBudgets] = useState<{ [key: number]: number }>({});
-  const [categories, setCategories] = useState<{ [key: number]: any[] }>({});
+const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
+  const dispatch = useDispatch();
+  const { data, loading, error } = useSelector((state) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempPercentages, setTempPercentages] = useState<{ [key: string]: string }>({});
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
-  // Fetch transactions from Redux
-  const { transactions } = useSelector((state) => state.transactions);
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [tempCategories, setTempCategories] = useState([]);
+  const [modifiedCategories, setModifiedCategories] = useState({});
+  const [totalError, setTotalError] = useState("");
 
-  // Ensure state exists for the selected month when switching months
   useEffect(() => {
-    setBudgets((prev) => ({
-      ...prev,
-      [selectedMonth]: prev[selectedMonth] ?? 50000, // Default budget if not set
-    }));
-    
-    setCategories((prev) => ({
-      ...prev,
-      [selectedMonth]: prev[selectedMonth] ?? generateCategories(), // Fresh copy for new months
-    }));
-  }, [selectedMonth]);
+    dispatch(fetchMonthlySummary({ userId, month: selectedMonth }));
+  }, [dispatch, userId, selectedMonth]);
+
+  useEffect(() => {
+    if (data[selectedMonth]?.categories?.length) {
+      setTempCategories(data[selectedMonth]?.categories);
+    } else {
+      setTempCategories(DEFAULT_CATEGORIES);
+    }
+  }, [data, selectedMonth]);
+
+  const budget = data[selectedMonth]?.budget ?? 100;
+  const transactions = data[selectedMonth]?.transactions || [];
 
   const calculateSpent = (categoryName) => {
-    const categoryTransactions = transactions?.filter((transaction) => {
-      const transactionMonth = new Date(transaction.date).getMonth() + 1;
-      return transaction.type === categoryName && transactionMonth === selectedMonth;
-    });
-    return categoryTransactions.reduce((total, transaction) => total + transaction.amount, 0);
+    return transactions
+      ?.filter(
+        (transaction) =>
+          transaction.type === categoryName &&
+          new Date(transaction.date).getMonth() + 1 === selectedMonth
+      )
+      .reduce((total, transaction) => total + transaction.amount, 0);
   };
 
-  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newBudget = parseFloat(e.target.value) || 0;
-    setBudgets((prev) => ({ ...prev, [selectedMonth]: newBudget }));
+  const handleBudgetChange = (e) => {
+    dispatch(updateMonthlySummary({
+      userId,
+      month: selectedMonth,
+      updatedSummary: { ...data[selectedMonth], budget: parseFloat(e.target.value) || 0 },
+    }));
   };
 
-  const handlePercentageChange = (name: string, value: string) => {
-    if (!value || isNaN(Number(value))) return;
-
-    setTempPercentages((prev) => ({ ...prev, [name]: value }));
-
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-
-    debounceTimeout.current = setTimeout(() => {
-      setCategories((prev) => {
-        if (!prev[selectedMonth]) return prev;
-
-        const updatedCategories = prev[selectedMonth].map((category) =>
-          category.name === name ? { ...category, isModified: true, percentage: parseFloat(value) } : category
-        );
-
-        return { ...prev, [selectedMonth]: updatedCategories };
-      });
-    }, 500);
+  const handlePercentageChange = (name, value) => {
+    setTempCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category.name === name ? { ...category, percentage: parseInt(value, 10) || 0 } : category
+      )
+    );
   };
 
-  const handleUpdatePercentages = () => {
-    let modifiedTotal = 0;
-    let unmodifiedCategories = [];
+  const handleBlur = (name) => {
+    setModifiedCategories((prev) => ({ ...prev, [name]: true }));
+  };
 
-    // Calculate modified total and identify unmodified categories
-    const updatedCategories = categories[selectedMonth].map((category) => {
-      const tempValue = tempPercentages[category.name];
-      const newPercentage = tempValue !== undefined ? parseFloat(tempValue) : category.percentage;
+  const handleUpdateSummary = () => {
+    const totalModified = tempCategories
+      .filter((cat) => modifiedCategories[cat.name])
+      .reduce((sum, cat) => sum + cat.percentage, 0);
+    
+    const remainingPercentage = 100 - totalModified;
+    const unmodifiedCategories = tempCategories.filter((cat) => !modifiedCategories[cat.name]);
 
-      if (category.isModified) {
-        modifiedTotal += newPercentage;
-        return { ...category, percentage: newPercentage };
-      } else {
-        unmodifiedCategories.push(category);
-        return category;
+    // Calculate the sum of unmodified categories
+    const totalUnmodifiedPercent = unmodifiedCategories.reduce((sum, cat) => sum + cat.percentage, 0);
+
+    let finalCategories = tempCategories.map((category) => {
+      if (!modifiedCategories[category.name]) {
+        return {
+          ...category,
+          percentage: (category.percentage / totalUnmodifiedPercent) * remainingPercentage,
+        };
       }
+      return category;
     });
 
-    const remainingPercentage = 100 - modifiedTotal;
-    const unmodifiedCount = unmodifiedCategories.length;
+    const newTotal = finalCategories.reduce((sum, cat) => sum + cat.percentage, 0);
 
-    if (remainingPercentage < 0) {
-      setErrorMessage("Total percentage exceeds 100%. Adjust values.");
+    if (newTotal !== 100) {
+      setTotalError("The total percentage must be exactly 100%");
       return;
     }
 
-    // Distribute remaining percentage to unmodified categories
-    if (remainingPercentage > 0 && unmodifiedCount > 0) {
-      updatedCategories.forEach((category) => {
-        if (!category.isModified) {
-          category.percentage = remainingPercentage / unmodifiedCount;
-        }
-      });
-    }
+    setTotalError("");
+    setTempCategories(finalCategories);
 
-    setCategories((prev) => ({ ...prev, [selectedMonth]: updatedCategories }));
-    setTempPercentages({});
-    setErrorMessage(null);
+    dispatch(updateMonthlySummary({
+      userId,
+      month: selectedMonth,
+      updatedSummary: { ...data[selectedMonth], categories: finalCategories },
+    }));
   };
-
-  const totalBudget = budgets[selectedMonth] || 0;
-  const currentCategories = categories[selectedMonth] || generateCategories();
 
   return (
     <Card className={className} sx={{ maxWidth: 600, mx: "auto", p: 3 }}>
@@ -125,14 +120,14 @@ const BudgetSummaryTable = ({ className, selectedMonth }) => {
             {isEditingBudget ? (
               <TextField
                 type="number"
-                value={totalBudget}
+                value={budget}
                 onChange={handleBudgetChange}
                 onBlur={() => setIsEditingBudget(false)}
                 size="small"
                 autoFocus
               />
             ) : (
-              <Typography variant="h6">₹{totalBudget.toFixed(2)}</Typography>
+              <Typography variant="h6">₹{budget.toFixed(2)}</Typography>
             )}
             <IconButton size="small" onClick={() => setIsEditingBudget(!isEditingBudget)}>
               <Pencil size={18} />
@@ -140,38 +135,42 @@ const BudgetSummaryTable = ({ className, selectedMonth }) => {
           </Box>
         </Box>
 
-        {currentCategories.map((category) => {
-          const allocated = ((totalBudget * category.percentage) / 100).toFixed(2);
-          const spent = calculateSpent(category.name);
-
-          return (
-            <Box key={category.name} display="flex" justifyContent="space-between" alignItems="center" borderBottom={1} py={1}>
-              <Box>
-                <Typography variant="body1" fontWeight="medium">{category.name}</Typography>
-                <Typography variant="body2" color="textSecondary">Allocated: ₹{allocated}</Typography>
-                <Typography variant="body2" color="textSecondary">Spent: ₹{spent.toFixed(2)}</Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                <TextField
-                  type="number"
-                  size="small"
-                  sx={{ width: 60 }}
-                  value={tempPercentages[category.name] || category.percentage.toFixed(2)}
-                  onChange={(e) => handlePercentageChange(category.name, e.target.value)}
-                />
-              </Box>
+        {tempCategories.map((category) => (
+          <Box key={category.name} display="flex" justifyContent="space-between" alignItems="center" borderBottom={1} py={1}>
+            <Box>
+              <Typography variant="body1" fontWeight="medium">{category.name}</Typography>
+              <Typography variant="body2" color="textSecondary">
+                Allocated: ₹{((budget * category.percentage) / 100).toFixed(2)}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Spent: ₹{calculateSpent(category.name).toFixed(2)}
+              </Typography>
             </Box>
-          );
-        })}
+            <TextField
+              type="number"
+              size="small"
+              sx={{
+                width: 60,
+                "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+                  display: "none",
+                },
+                "& input[type=number]": {
+                  MozAppearance: "textfield",
+                },
+              }}
+              value={category.percentage}
+              onChange={(e) => handlePercentageChange(category.name, e.target.value)}
+              onBlur={() => handleBlur(category.name)}
+            />
+          </Box>
+        ))}
 
-        {errorMessage && <Alert severity="error" sx={{ mt: 2 }}>{errorMessage}</Alert>}
-
-        <Box mt={2} display="flex" justifyContent="center">
-          <Button variant="contained" color="primary" onClick={handleUpdatePercentages}>
-            Update Percentages
-          </Button>
-        </Box>
+        {totalError && <Alert severity="error" sx={{ mt: 2 }}>{totalError}</Alert>}
+        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
       </CardContent>
+      <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleUpdateSummary}>
+        Update Summary
+      </Button>
     </Card>
   );
 };
