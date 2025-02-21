@@ -1,21 +1,25 @@
 import React, { useEffect } from "react";
-import {  Container, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Container, Typography } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import './LandingPage.scss';
+import "./LandingPage.scss";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        navigate("/transactions");
+      
+      // ✅ Redirect only if the user is logged in and on "/"
+      if (data.user && location.pathname === "/") {
+        navigate("/transactions", { replace: true });
       }
     };
+
     checkUser();
-  }, [navigate]);
+  }, [navigate, location.pathname]); // ✅ Include location.pathname to prevent unwanted redirects
 
   return (
     <div className="landing-page">

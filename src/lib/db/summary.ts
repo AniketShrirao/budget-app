@@ -37,12 +37,13 @@ export const fetchSummary = async (userId: string, month: string): Promise<Summa
 export const updateSummary = async (
   userId: string,
   month: string,
-  updatedSummary: Partial<SummaryData>
+  updatedSummary: Partial<SummaryData>,
 ): Promise<SummaryData | null> => {
   try {
     // Ensure the summary table exists
     await supabase.rpc("ensure_summary_table");
 
+    console.log("Updating summary for", userId, month, updatedSummary);
     // Merge with default values to prevent missing fields
     const summaryToUpdate: SummaryData = {
       budget: updatedSummary.budget ?? 100,

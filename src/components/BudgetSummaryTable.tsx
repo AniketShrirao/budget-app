@@ -20,11 +20,12 @@ const DEFAULT_CATEGORIES = [
   { name: "Marriage", percentage: 30 },
 ];
 
-const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
+const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactions }) => {
   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [tempCategories, setTempCategories] = useState([]);
+  const [currentMonthTransactions, setCurrentMonthTransactions] = useState([]);
   const [modifiedCategories, setModifiedCategories] = useState({});
   const [totalError, setTotalError] = useState("");
 
@@ -40,11 +41,14 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
     }
   }, [data, selectedMonth]);
 
+  useEffect(() => {
+    setCurrentMonthTransactions(parentTransactions?.length ? parentTransactions : data[selectedMonth]?.transactions || []);
+  }, [parentTransactions, data, selectedMonth]);
+
   const budget = data[selectedMonth]?.budget ?? 100;
-  const transactions = data[selectedMonth]?.transactions || [];
 
   const calculateSpent = (categoryName) => {
-    return transactions
+    return currentMonthTransactions
       ?.filter(
         (transaction) =>
           transaction.type === categoryName &&
@@ -81,7 +85,6 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
     const remainingPercentage = 100 - totalModified;
     const unmodifiedCategories = tempCategories.filter((cat) => !modifiedCategories[cat.name]);
 
-    // Calculate the sum of unmodified categories
     const totalUnmodifiedPercent = unmodifiedCategories.reduce((sum, cat) => sum + cat.percentage, 0);
 
     let finalCategories = tempCategories.map((category) => {
@@ -107,16 +110,25 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
     dispatch(updateMonthlySummary({
       userId,
       month: selectedMonth,
-      updatedSummary: { ...data[selectedMonth], categories: finalCategories },
+      updatedSummary: { ...data[selectedMonth], categories: finalCategories, transactions: currentMonthTransactions },
     }));
   };
 
   return (
     <Card className={className} sx={{ maxWidth: 600, mx: "auto", p: 3 }}>
       <CardContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h6">Budget Summary</Typography>
-          <Box display="flex" alignItems="center" gap={1}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+          sx={{
+            gap: "20px",
+            minHeight: "40px",
+          }}
+        >
+          <Typography variant="h6">Monthly Salary</Typography>
+          <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: "120px" }}>
             {isEditingBudget ? (
               <TextField
                 type="number"
@@ -125,9 +137,12 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
                 onBlur={() => setIsEditingBudget(false)}
                 size="small"
                 autoFocus
+                sx={{ width: 80 }}
               />
             ) : (
-              <Typography variant="h6">₹{budget.toFixed(2)}</Typography>
+              <Typography variant="h6" sx={{ minWidth: "80px", textAlign: "right" }}>
+                ₹{budget.toFixed()}
+              </Typography>
             )}
             <IconButton size="small" onClick={() => setIsEditingBudget(!isEditingBudget)}>
               <Pencil size={18} />
@@ -135,40 +150,34 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth }) => {
           </Box>
         </Box>
 
-        {tempCategories.map((category) => (
-          <Box key={category.name} display="flex" justifyContent="space-between" alignItems="center" borderBottom={1} py={1}>
-            <Box>
-              <Typography variant="body1" fontWeight="medium">{category.name}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                Allocated: ₹{((budget * category.percentage) / 100).toFixed(2)}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Spent: ₹{calculateSpent(category.name).toFixed(2)}
-              </Typography>
+        <Box>
+          {tempCategories.map((category) => (
+            <Box key={category.name} display="flex" justifyContent="space-between" alignItems="center" borderBottom={1} py={1}>
+              <Box>
+                <Typography variant="body1" fontWeight="medium">{category.name}</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Allocated: ₹{((budget * category.percentage) / 100).toFixed()}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Spent: ₹{calculateSpent(category.name).toFixed()}
+                </Typography>
+              </Box>
+              <TextField
+                type="number"
+                size="small"
+                sx={{ width: 60 }}
+                value={category.percentage.toFixed()}
+                onChange={(e) => handlePercentageChange(category.name, e.target.value)}
+                onBlur={() => handleBlur(category.name)}
+              />
             </Box>
-            <TextField
-              type="number"
-              size="small"
-              sx={{
-                width: 60,
-                "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-                  display: "none",
-                },
-                "& input[type=number]": {
-                  MozAppearance: "textfield",
-                },
-              }}
-              value={category.percentage}
-              onChange={(e) => handlePercentageChange(category.name, e.target.value)}
-              onBlur={() => handleBlur(category.name)}
-            />
-          </Box>
-        ))}
+          ))}
+        </Box>
 
         {totalError && <Alert severity="error" sx={{ mt: 2 }}>{totalError}</Alert>}
         {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
       </CardContent>
-      <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleUpdateSummary}>
+      <Button variant="contained" color="primary" sx={{ mt: 2, width: "100%" }} onClick={handleUpdateSummary}>
         Update Summary
       </Button>
     </Card>
