@@ -25,14 +25,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchSession();
 
-    supabase.auth.onAuthStateChange(
-      (_, session) => {
-        if (session?.user) {
-          setUser(session.user || null);
-          storeUserInLocalStorage(session.user);
-        }
-      },
-    );
+    supabase.auth.onAuthStateChange((_, session) => {
+      if (session?.user) {
+        setUser(session.user || null);
+        storeUserInLocalStorage(session.user);
+      }
+    });
 
     return () => {
       setLoading(false);
@@ -63,6 +61,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: process.env.REACT_APP_SUPABASE_REDIRECT_URI,
+      },
     });
     if (error) console.error('Error logging in:', error.message);
   };
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('users');
     setUser(null);
   };
+
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle, signOut, loading }}>
       {children}
