@@ -1,11 +1,17 @@
 import { supabase } from '../supabase';
 
 // Add Income
-export const addIncome = async (income) => {
+interface Income {
+  amount: number;
+  description?: string;
+  date?: string;
+}
+
+export const addIncome = async (income: Income): Promise<Income[]> => {
   const { data, error } = await supabase.from('income').insert([income]);
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 // Get Total Income
