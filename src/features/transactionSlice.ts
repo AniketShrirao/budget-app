@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { supabase } from "../lib/supabase"; // Ensure supabase is imported properly
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { supabase } from '../lib/supabase'; // Ensure supabase is imported properly
 
 interface Transaction {
   id: string;
@@ -7,9 +7,9 @@ interface Transaction {
   category: string;
   description: string;
   amount: number;
-  type: "Needs" | "Wants" | "Investment";
+  type: 'Needs' | 'Wants' | 'Investment';
   important: boolean;
-  recurrence: "Monthly" | "Quarterly" | "Yearly" | "None";
+  recurrence: 'Monthly' | 'Quarterly' | 'Yearly' | 'None';
 }
 
 interface TransactionState {
@@ -25,38 +25,41 @@ const initialState: TransactionState = {
 };
 
 // Fetch transactions from Supabase based on user_id from localStorage
-export const fetchTransactions = createAsyncThunk("transactions/fetch", async (_, { getState }) => {
-  try {
-    const storedUser = localStorage.getItem("users");
-    const user = storedUser ? JSON.parse(storedUser)[0] : null;
-    
-    if (!user) throw new Error("User not authenticated");
+export const fetchTransactions = createAsyncThunk(
+  'transactions/fetch',
+  async (_, { getState }) => {
+    try {
+      const storedUser = localStorage.getItem('users');
+      const user = storedUser ? JSON.parse(storedUser)[0] : null;
 
-    // Fetch transactions for the authenticated user using user_id
-    const { data, error } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("user_id", user.id); // Use the authenticated user's user_id
+      if (!user) throw new Error('User not authenticated');
 
-    if (error) throw new Error(error.message);
-    return data; // Return the fetched transactions
-  } catch (error) {
-    throw error;
-  }
-});
+      // Fetch transactions for the authenticated user using user_id
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id); // Use the authenticated user's user_id
+
+      if (error) throw new Error(error.message);
+      return data; // Return the fetched transactions
+    } catch (error) {
+      throw error;
+    }
+  },
+);
 
 // Add a transaction to Supabase using user_id from localStorage
 export const addTransactionToDB = createAsyncThunk(
-  "transactions/add",
-  async (transaction: Omit<Transaction, "id">, { getState }) => {
+  'transactions/add',
+  async (transaction: Omit<Transaction, 'id'>, { getState }) => {
     try {
-      const storedUser = localStorage.getItem("users");
+      const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;
-      if (!user) throw new Error("User not authenticated");
+      if (!user) throw new Error('User not authenticated');
 
       // Insert the transaction with user_id
       const { data, error } = await supabase
-        .from("transactions")
+        .from('transactions')
         .insert([{ ...transaction, user_id: user.id }]) // Include user_id
         .select();
 
@@ -65,35 +68,35 @@ export const addTransactionToDB = createAsyncThunk(
     } catch (error) {
       throw error;
     }
-  }
+  },
 );
 
 // Remove a transaction from Supabase
 export const removeTransactionFromDB = createAsyncThunk(
-  "transactions/remove",
+  'transactions/remove',
   async (id: string, { getState }) => {
     try {
-      const storedUser = localStorage.getItem("users");
+      const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;
-      if (!user) throw new Error("User not authenticated");
+      if (!user) throw new Error('User not authenticated');
 
       // Use user_id to delete the transaction
       const { error } = await supabase
-        .from("transactions")
+        .from('transactions')
         .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw new Error(error.message);
       return id;
     } catch (error) {
       throw error;
     }
-  }
+  },
 );
 
 const transactionSlice = createSlice({
-  name: "transactions",
+  name: 'transactions',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -109,7 +112,7 @@ const transactionSlice = createSlice({
       })
       .addCase(fetchTransactions.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch transactions.";
+        state.error = action.error.message || 'Failed to fetch transactions.';
       })
 
       // Handle adding a transaction
@@ -124,7 +127,7 @@ const transactionSlice = createSlice({
       })
       .addCase(addTransactionToDB.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to add transaction.";
+        state.error = action.error.message || 'Failed to add transaction.';
       })
 
       // Handle removing a transaction
@@ -133,11 +136,13 @@ const transactionSlice = createSlice({
       })
       .addCase(removeTransactionFromDB.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions = state.transactions.filter((t) => t.id !== action.payload);
+        state.transactions = state.transactions.filter(
+          (t) => t.id !== action.payload,
+        );
       })
       .addCase(removeTransactionFromDB.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to remove transaction.";
+        state.error = action.error.message || 'Failed to remove transaction.';
       });
   },
 });

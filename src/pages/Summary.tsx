@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import SummaryTabs from '../components/SummaryTabs'
+import React, { useEffect } from 'react';
+import SummaryTabs from '../components/SummaryTabs';
 import { useAuth } from '../context/AuthContext';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -11,14 +11,14 @@ const Summary = () => {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) navigate("/");
+    if (!user) navigate('/');
   }, [user, dispatch, loading, navigate]);
 
   return (
-    <div className='wrapper'>
+    <div className="wrapper">
       <SummaryTabs />
     </div>
-  )
-}
+  );
+};
 
-export default Summary
+export default Summary;

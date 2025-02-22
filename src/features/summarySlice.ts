@@ -20,7 +20,7 @@ export const fetchMonthlySummary = createAsyncThunk(
   async ({ userId, month }: { userId: string; month: string }) => {
     const response = await fetchSummary(userId, month);
     return { month, summary: response };
-  }
+  },
 );
 
 // **Update monthly summary**
@@ -37,7 +37,7 @@ export const updateMonthlySummary = createAsyncThunk(
   }) => {
     await updateSummary(userId, month, updatedSummary);
     return { month, summary: updatedSummary };
-  }
+  },
 );
 
 const summarySlice = createSlice({

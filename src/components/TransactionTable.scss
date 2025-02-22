@@ -1,44 +1,43 @@
 .transaction-table {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 50px auto;
-  
-    .MuiTable-root {
-      width: 100%;
-    }
-  
-    .MuiTableHead-root {
-      background: wheat ;
-      color: white;
-    }
-  
-    .MuiTableCell-root {
-      padding: 12px 15px;
-      font-size: 1rem;
-    }
-  
-    .delete-button {
-      background-color: #ff4081;
-      color: white;
-      font-size: 0.9rem;
-      border-radius: 20px;
-      padding: 6px 12px;
-      transition: background-color 0.3s ease;
-  
-      &:hover {
-        background-color: #c51162;
-      }
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+
+  .MuiTable-root {
+    width: 100%;
+  }
+
+  .MuiTableHead-root {
+    background: wheat;
+    color: white;
+  }
+
+  .MuiTableCell-root {
+    padding: 12px 15px;
+    font-size: 1rem;
+  }
+
+  .delete-button {
+    background-color: #ff4081;
+    color: white;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    padding: 6px 12px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #c51162;
     }
   }
-  
-  @media (max-width: 768px) {
-    .MuiTableCell-root {
-      font-size: 0.9rem;
-    }
-  
-    .delete-button {
-      font-size: 0.8rem;
-    }
+}
+
+@media (max-width: 768px) {
+  .MuiTableCell-root {
+    font-size: 0.9rem;
   }
-  
+
+  .delete-button {
+    font-size: 0.8rem;
+  }
+}

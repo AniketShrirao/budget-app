@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,26 +8,34 @@ import {
   Typography,
   Button,
   Alert,
-} from "@mui/material";
-import { Pencil } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { updateMonthlySummary, fetchMonthlySummary } from "../features/summarySlice";
+} from '@mui/material';
+import { Pencil } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  updateMonthlySummary,
+  fetchMonthlySummary,
+} from '../features/summarySlice';
 
 const DEFAULT_CATEGORIES = [
-  { name: "Needs", percentage: 20 },
-  { name: "Wants", percentage: 20 },
-  { name: "Investment", percentage: 30 },
-  { name: "Marriage", percentage: 30 },
+  { name: 'Needs', percentage: 20 },
+  { name: 'Wants', percentage: 20 },
+  { name: 'Investment', percentage: 30 },
+  { name: 'Marriage', percentage: 30 },
 ];
 
-const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactions }) => {
+const BudgetSummaryTable = ({
+  className,
+  userId,
+  selectedMonth,
+  parentTransactions,
+}) => {
   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [tempCategories, setTempCategories] = useState([]);
   const [currentMonthTransactions, setCurrentMonthTransactions] = useState([]);
   const [modifiedCategories, setModifiedCategories] = useState({});
-  const [totalError, setTotalError] = useState("");
+  const [totalError, setTotalError] = useState('');
 
   useEffect(() => {
     dispatch(fetchMonthlySummary({ userId, month: selectedMonth }));
@@ -42,7 +50,11 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
   }, [data, selectedMonth]);
 
   useEffect(() => {
-    setCurrentMonthTransactions(parentTransactions?.length ? parentTransactions : data[selectedMonth]?.transactions || []);
+    setCurrentMonthTransactions(
+      parentTransactions?.length
+        ? parentTransactions
+        : data[selectedMonth]?.transactions || [],
+    );
   }, [parentTransactions, data, selectedMonth]);
 
   const budget = data[selectedMonth]?.budget ?? 100;
@@ -52,24 +64,31 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
       ?.filter(
         (transaction) =>
           transaction.type === categoryName &&
-          new Date(transaction.date).getMonth() + 1 === selectedMonth
+          new Date(transaction.date).getMonth() + 1 === selectedMonth,
       )
       .reduce((total, transaction) => total + transaction.amount, 0);
   };
 
   const handleBudgetChange = (e) => {
-    dispatch(updateMonthlySummary({
-      userId,
-      month: selectedMonth,
-      updatedSummary: { ...data[selectedMonth], budget: parseFloat(e.target.value) || 0 },
-    }));
+    dispatch(
+      updateMonthlySummary({
+        userId,
+        month: selectedMonth,
+        updatedSummary: {
+          ...data[selectedMonth],
+          budget: parseFloat(e.target.value) || 0,
+        },
+      }),
+    );
   };
 
   const handlePercentageChange = (name, value) => {
     setTempCategories((prevCategories) =>
       prevCategories.map((category) =>
-        category.name === name ? { ...category, percentage: parseInt(value, 10) || 0 } : category
-      )
+        category.name === name
+          ? { ...category, percentage: parseInt(value, 10) || 0 }
+          : category,
+      ),
     );
   };
 
@@ -81,41 +100,57 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
     const totalModified = tempCategories
       .filter((cat) => modifiedCategories[cat.name])
       .reduce((sum, cat) => sum + cat.percentage, 0);
-    
-    const remainingPercentage = 100 - totalModified;
-    const unmodifiedCategories = tempCategories.filter((cat) => !modifiedCategories[cat.name]);
 
-    const totalUnmodifiedPercent = unmodifiedCategories.reduce((sum, cat) => sum + cat.percentage, 0);
+    const remainingPercentage = 100 - totalModified;
+    const unmodifiedCategories = tempCategories.filter(
+      (cat) => !modifiedCategories[cat.name],
+    );
+
+    const totalUnmodifiedPercent = unmodifiedCategories.reduce(
+      (sum, cat) => sum + cat.percentage,
+      0,
+    );
 
     let finalCategories = tempCategories.map((category) => {
       if (!modifiedCategories[category.name]) {
         return {
           ...category,
-          percentage: (category.percentage / totalUnmodifiedPercent) * remainingPercentage,
+          percentage:
+            (category.percentage / totalUnmodifiedPercent) *
+            remainingPercentage,
         };
       }
       return category;
     });
 
-    const newTotal = finalCategories.reduce((sum, cat) => sum + cat.percentage, 0);
+    const newTotal = finalCategories.reduce(
+      (sum, cat) => sum + cat.percentage,
+      0,
+    );
 
     if (newTotal !== 100) {
-      setTotalError("The total percentage must be exactly 100%");
+      setTotalError('The total percentage must be exactly 100%');
       return;
     }
 
-    setTotalError("");
+    setTotalError('');
     setTempCategories(finalCategories);
 
-    dispatch(updateMonthlySummary({
-      userId,
-      month: selectedMonth,
-      updatedSummary: { ...data[selectedMonth], categories: finalCategories, transactions: currentMonthTransactions },
-    }));
+    dispatch(
+      updateMonthlySummary({
+        userId,
+        month: selectedMonth,
+        updatedSummary: {
+          ...data[selectedMonth],
+          categories: finalCategories,
+          transactions: currentMonthTransactions,
+        },
+      }),
+    );
   };
 
   return (
-    <Card className={className} sx={{ maxWidth: 600, mx: "auto", p: 3 }}>
+    <Card className={className} sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
       <CardContent>
         <Box
           display="flex"
@@ -123,12 +158,17 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
           alignItems="center"
           mb={2}
           sx={{
-            gap: "20px",
-            minHeight: "40px",
+            gap: '20px',
+            minHeight: '40px',
           }}
         >
           <Typography variant="h6">Monthly Salary</Typography>
-          <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: "120px" }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}
+            sx={{ minWidth: '120px' }}
+          >
             {isEditingBudget ? (
               <TextField
                 type="number"
@@ -140,11 +180,17 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
                 sx={{ width: 80 }}
               />
             ) : (
-              <Typography variant="h6" sx={{ minWidth: "80px", textAlign: "right" }}>
+              <Typography
+                variant="h6"
+                sx={{ minWidth: '80px', textAlign: 'right' }}
+              >
                 ₹{budget.toFixed()}
               </Typography>
             )}
-            <IconButton size="small" onClick={() => setIsEditingBudget(!isEditingBudget)}>
+            <IconButton
+              size="small"
+              onClick={() => setIsEditingBudget(!isEditingBudget)}
+            >
               <Pencil size={18} />
             </IconButton>
           </Box>
@@ -152,9 +198,18 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
 
         <Box>
           {tempCategories.map((category) => (
-            <Box key={category.name} display="flex" justifyContent="space-between" alignItems="center" borderBottom={1} py={1}>
+            <Box
+              key={category.name}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              borderBottom={1}
+              py={1}
+            >
               <Box>
-                <Typography variant="body1" fontWeight="medium">{category.name}</Typography>
+                <Typography variant="body1" fontWeight="medium">
+                  {category.name}
+                </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Allocated: ₹{((budget * category.percentage) / 100).toFixed()}
                 </Typography>
@@ -167,17 +222,32 @@ const BudgetSummaryTable = ({ className, userId, selectedMonth, parentTransactio
                 size="small"
                 sx={{ width: 60 }}
                 value={category.percentage.toFixed()}
-                onChange={(e) => handlePercentageChange(category.name, e.target.value)}
+                onChange={(e) =>
+                  handlePercentageChange(category.name, e.target.value)
+                }
                 onBlur={() => handleBlur(category.name)}
               />
             </Box>
           ))}
         </Box>
 
-        {totalError && <Alert severity="error" sx={{ mt: 2 }}>{totalError}</Alert>}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+        {totalError && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {totalError}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
       </CardContent>
-      <Button variant="contained" color="primary" sx={{ mt: 2, width: "100%" }} onClick={handleUpdateSummary}>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2, width: '100%' }}
+        onClick={handleUpdateSummary}
+      >
         Update Summary
       </Button>
     </Card>

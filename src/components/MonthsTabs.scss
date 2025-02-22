@@ -1,20 +1,19 @@
 .months-tabs {
-    padding: 20px 0;
-    display: flex;
-    width: 70%;
+  padding: 20px 0;
+  display: flex;
+  width: 70%;
 
-    .transaction-table {
-        margin: 20px auto;
+  .transaction-table {
+    margin: 20px auto;
+  }
+
+  .MuiTabScrollButton-horizontal.MuiTabs-scrollButtons {
+    @media (max-width: 600px) {
+      display: inline-flex;
     }
 
-
-    .MuiTabScrollButton-horizontal.MuiTabs-scrollButtons {
-         @media (max-width: 600px) {
-            display: inline-flex;
-        }
-
-        &.Mui-disabled {
-            display: none;
-        }
-   }
+    &.Mui-disabled {
+      display: none;
+    }
+  }
 }

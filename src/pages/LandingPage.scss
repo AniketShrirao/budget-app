@@ -1,52 +1,51 @@
 .landing-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(45deg, #000000, #caa0ae);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(45deg, #000000, #caa0ae);
+  color: white;
+
+  .intro {
+    text-align: center;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .description {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
+
+  .sign-in-button {
+    background-color: #ff4081;
     color: white;
-  
-    .intro {
-      text-align: center;
-      width: 100%;
-    }
-  
-    .title {
-      font-size: 3rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-  
-    .description {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-    }
-  
-    .sign-in-button {
-      background-color: #FF4081;
-      color: white;
-      font-size: 1.2rem;
-      padding: 15px 30px;
-      border-radius: 30px;
-      transition: background-color 0.3s ease;
-  
-      &:hover {
-        background-color: #c51162;
-      }
-    }
-  
-    @media (max-width: 768px) {
-      .title {
-        font-size: 2rem;
-      }
-  
-      .description {
-        font-size: 1rem;
-      }
-  
-      .sign-in-button {
-        font-size: 1rem;
-      }
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #c51162;
     }
   }
-  
+
+  @media (max-width: 768px) {
+    .title {
+      font-size: 2rem;
+    }
+
+    .description {
+      font-size: 1rem;
+    }
+
+    .sign-in-button {
+      font-size: 1rem;
+    }
+  }
+}

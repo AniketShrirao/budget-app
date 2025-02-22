@@ -1,6 +1,6 @@
-import { Button } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
-import "./AuthButton.scss";
+import { Button } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
+import './AuthButton.scss';
 
 const AuthButton = () => {
   const { user, signInWithGoogle, signOut } = useAuth();
@@ -13,18 +13,22 @@ const AuthButton = () => {
         </Button>
       ) : (
         <>
-          <Button  size="small" variant="contained" color="primary">
+          <Button size="small" variant="contained" color="primary">
             Sign Up
           </Button>
 
-        <Button size="small" variant="contained" color="primary" onClick={signInWithGoogle}>
-          Sign In
-        </Button>
-      </>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick={signInWithGoogle}
+          >
+            Sign In
+          </Button>
+        </>
       )}
     </>
   );
 };
 
 export default AuthButton;
- 

@@ -1,11 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import transactionReducer from "./features/transactionSlice";
-import summaryReducer from "./features/summarySlice";
+import { configureStore } from '@reduxjs/toolkit';
+import transactionReducer from './features/transactionSlice';
+import summaryReducer from './features/summarySlice';
 
 export const store = configureStore({
   reducer: {
     summary: summaryReducer,
-    transactions: transactionReducer
+    transactions: transactionReducer,
   },
 });
 

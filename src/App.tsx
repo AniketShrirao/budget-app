@@ -1,17 +1,23 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import Header from "./components/Header";
-import Transactions from "./pages/Transactions";
-import Summary from "./pages/Summary";
-import { useEffect, useState } from "react";
-import { supabase } from "./lib/supabase";
-import "./App.scss";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Header from './components/Header';
+import Transactions from './pages/Transactions';
+import Summary from './pages/Summary';
+import { useEffect, useState } from 'react';
+import { supabase } from './lib/supabase';
+import './App.scss';
 
 function DebugRouteLogger() {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("Current Path:", location.pathname);
+    console.log('Current Path:', location.pathname);
   }, [location]);
 
   return null; // This component just logs route changes
@@ -37,7 +43,16 @@ function AppContent() {
       <DebugRouteLogger />
       <Routes>
         {/* ✅ Redirect only from "/" if authenticated */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/transactions" replace /> : <LandingPage />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/transactions" replace />
+            ) : (
+              <LandingPage />
+            )
+          }
+        />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/summary" element={<Summary />} />
       </Routes>

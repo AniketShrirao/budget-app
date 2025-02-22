@@ -1,12 +1,16 @@
-import React from "react";
-import { Tabs, Tab, Box } from "@mui/material";
+import React from 'react';
+import { Tabs, Tab, Box } from '@mui/material';
 
 interface TabsProps {
   selectedMonth: number; // 1-based
   onMonthChange: (newMonth: number) => void;
 }
 
-const MonthTabs: React.FC<TabsProps> = ({ className, selectedMonth, onMonthChange }) => {
+const MonthTabs: React.FC<TabsProps> = ({
+  className,
+  selectedMonth,
+  onMonthChange,
+}) => {
   return (
     <Box className={className}>
       <Tabs
@@ -17,7 +21,12 @@ const MonthTabs: React.FC<TabsProps> = ({ className, selectedMonth, onMonthChang
         sx={{ flexGrow: 1 }}
       >
         {Array.from({ length: 12 }, (_, index) => (
-          <Tab key={index + 1} label={new Date(0, index).toLocaleString('en-US', { month: 'long' })} />
+          <Tab
+            key={index + 1}
+            label={new Date(0, index).toLocaleString('en-US', {
+              month: 'long',
+            })}
+          />
         ))}
       </Tabs>
     </Box>
