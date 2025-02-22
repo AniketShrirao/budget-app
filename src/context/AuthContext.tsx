@@ -59,10 +59,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signInWithGoogle = async () => {
+    console.log("signing in with google", import.meta.env.VITE_SUPABASE_REDIRECT_URI);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: process.env.REACT_APP_SUPABASE_REDIRECT_URI,
+        redirectTo: import.meta.env.VITE_SUPABASE_REDIRECT_URI,
+        // redirectTo: "https://transcendent-boba-0333d8.netlify.app",
       },
     });
     if (error) console.error('Error logging in:', error.message);
