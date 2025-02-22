@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store';
 import { fetchTransactions } from '../features/transactionSlice';
 import TransactionForm from '../components/TransactionForm';
 import { Container, Typography, CircularProgress } from '@mui/material';
@@ -9,8 +10,10 @@ import './Transactions.scss';
 import MonthsTabs from '../components/MonthsTabs';
 
 const Transactions = () => {
-  const { user, loading } = useAuth();
-  const dispatch = useDispatch();
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +32,7 @@ const Transactions = () => {
   }
 
   return (
-    <Container maxWidth="unset" classes={{ root: 'transaction-container' }}>
+    <Container maxWidth={false} classes={{ root: 'transaction-container' }}>
       <TransactionForm />
       <MonthsTabs />
     </Container>

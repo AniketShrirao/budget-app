@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactions } from '../features/transactionSlice';
 import TransactionTable from './TransactionTable';
 import MonthTabs from './MonthTabs';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import './MonthsTabs.scss';
 
 const MonthsTabs = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Start from 1
 
   const [page, setPage] = useState(0);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const transactions = useSelector(
     (state: RootState) => state.transactions.transactions,
@@ -28,12 +28,12 @@ const MonthsTabs = () => {
   return (
     <Box className="months-tabs">
       <MonthTabs
-        selectedMonth={selectedMonth}
-        onMonthChange={setSelectedMonth}
+        selectedMonth={selectedMonth.toString()}
+        onMonthChange={(newMonth) => setSelectedMonth(Number(newMonth))}
       />
       {filteredTransactions.length > 0 ? (
         <TransactionTable
-          transactions={filteredTransactions}
+          filteredTransactions={filteredTransactions}
           page={page}
           setPage={setPage}
         />

@@ -3,7 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import './AuthButton.scss';
 
 const AuthButton = () => {
-  const { user, signInWithGoogle, signOut } = useAuth();
+  const auth = useAuth();
+  const { user, signInWithGoogle, signOut } = auth || {};
 
   return (
     <>

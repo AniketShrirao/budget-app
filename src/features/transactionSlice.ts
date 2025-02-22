@@ -1,15 +1,17 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { supabase } from '../lib/supabase'; // Ensure supabase is imported properly
 
-interface Transaction {
+
+export interface Transaction {
   id: string;
   date: string;
-  category: string;
   description: string;
   amount: number;
-  type: 'Needs' | 'Wants' | 'Investment';
+  type: string;
+  category: string;
+  status: string;
   important: boolean;
-  recurrence: 'Monthly' | 'Quarterly' | 'Yearly' | 'None';
+  recurrence: string;
 }
 
 interface TransactionState {
@@ -27,7 +29,7 @@ const initialState: TransactionState = {
 // Fetch transactions from Supabase based on user_id from localStorage
 export const fetchTransactions = createAsyncThunk(
   'transactions/fetch',
-  async (_, { getState }) => {
+  async (_) => {
     try {
       const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;
@@ -51,7 +53,7 @@ export const fetchTransactions = createAsyncThunk(
 // Add a transaction to Supabase using user_id from localStorage
 export const addTransactionToDB = createAsyncThunk(
   'transactions/add',
-  async (transaction: Omit<Transaction, 'id'>, { getState }) => {
+  async (transaction: Omit<Transaction, 'id'>) => {
     try {
       const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;
@@ -74,7 +76,7 @@ export const addTransactionToDB = createAsyncThunk(
 // Remove a transaction from Supabase
 export const removeTransactionFromDB = createAsyncThunk(
   'transactions/remove',
-  async (id: string, { getState }) => {
+  async (id: string) => {
     try {
       const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;

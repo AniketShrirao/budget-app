@@ -15,6 +15,8 @@ import {
   updateMonthlySummary,
   fetchMonthlySummary,
 } from '../features/summarySlice';
+import { store } from '../store';
+import { Transaction } from '../features/transactionSlice';
 
 const DEFAULT_CATEGORIES = [
   { name: 'Needs', percentage: 20 },
@@ -23,18 +25,25 @@ const DEFAULT_CATEGORIES = [
   { name: 'Marriage', percentage: 30 },
 ];
 
-const BudgetSummaryTable = ({
+interface BudgetSummaryTableProps {
+  className?: string;
+  userId: string;
+  selectedMonth: string;
+  parentTransactions: any[];
+}
+
+const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   className,
   userId,
   selectedMonth,
   parentTransactions,
 }) => {
-  const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state.summary);
+  const dispatch = useDispatch<typeof store.dispatch>();
+  const { data, error } = useSelector((state: { summary: any }) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempCategories, setTempCategories] = useState([]);
-  const [currentMonthTransactions, setCurrentMonthTransactions] = useState([]);
-  const [modifiedCategories, setModifiedCategories] = useState({});
+  const [tempCategories, setTempCategories] = useState<{ name: string; percentage: number }[]>([]);
+  const [currentMonthTransactions, setCurrentMonthTransactions] = useState<any[]>([]);
+  const [modifiedCategories, setModifiedCategories] = useState<{ [key: string]: boolean }>({});
   const [totalError, setTotalError] = useState('');
 
   useEffect(() => {
@@ -59,17 +68,17 @@ const BudgetSummaryTable = ({
 
   const budget = data[selectedMonth]?.budget ?? 100;
 
-  const calculateSpent = (categoryName) => {
+  const calculateSpent = (categoryName: string): number => {
     return currentMonthTransactions
       ?.filter(
-        (transaction) =>
+        (transaction: Transaction) =>
           transaction.type === categoryName &&
-          new Date(transaction.date).getMonth() + 1 === selectedMonth,
+          new Date(transaction.date).getMonth() + 1 === Number(selectedMonth),
       )
-      .reduce((total, transaction) => total + transaction.amount, 0);
+      .reduce((total: number, transaction: Transaction) => total + transaction.amount, 0);
   };
 
-  const handleBudgetChange = (e) => {
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
       updateMonthlySummary({
         userId,
@@ -82,18 +91,21 @@ const BudgetSummaryTable = ({
     );
   };
 
-  const handlePercentageChange = (name, value) => {
-    setTempCategories((prevCategories) =>
-      prevCategories.map((category) =>
-        category.name === name
-          ? { ...category, percentage: parseInt(value, 10) || 0 }
-          : category,
+  interface Category {
+    name: string;
+    percentage: number;
+  }
+
+  const handlePercentageChange = (name: string, value: string) => {
+    setTempCategories((prevCategories: Category[]) =>
+      prevCategories.map((category: Category) =>
+        category.name === name ? { ...category, percentage: parseInt(value, 10) || 0 } : category,
       ),
     );
   };
 
-  const handleBlur = (name) => {
-    setModifiedCategories((prev) => ({ ...prev, [name]: true }));
+  const handleBlur = (name: string) => {
+    setModifiedCategories((prev: { [key: string]: boolean }) => ({ ...prev, [name]: true }));
   };
 
   const handleUpdateSummary = () => {

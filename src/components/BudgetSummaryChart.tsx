@@ -10,14 +10,20 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useSelector } from 'react-redux';
+import { Transaction } from '../features/transactionSlice';
 
 const COLORS = {
   Allocated: '#4CAF50', // Green for Allocated
   Spent: '#F44336', // Red for Spent
 };
 
-const BudgetSummaryChart = ({ selectedMonth, parentTransactions }) => {
-  const { data } = useSelector((state) => state.summary);
+interface BudgetSummaryChartProps {
+  selectedMonth: string;
+  parentTransactions: Array<{ type: string; amount: number }>;
+}
+
+const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth, parentTransactions }) => {
+  const { data } = useSelector((state: any) => state.summary);
 
   // Merge transactions from Redux store and parentTransactions
   const currentMonthTransactions = [
@@ -41,13 +47,23 @@ const BudgetSummaryChart = ({ selectedMonth, parentTransactions }) => {
     );
   }
 
-  // Process data for Stacked Bar Chart
-  const chartData = categories.map((category) => {
-    const spent = currentMonthTransactions
-      .filter((tx) => tx.type === category.name)
-      .reduce((total, tx) => total + tx.amount, 0);
+  interface Category {
+    name: string;
+    percentage: number;
+  }
 
-    const allocated = Math.round(
+  interface ChartData {
+    category: string;
+    Allocated: number;
+    Spent: number;
+  }
+
+  const chartData: ChartData[] = categories.map((category: Category): ChartData => {
+    const spent: number = currentMonthTransactions
+      .filter((tx: Transaction) => tx.type === category.name)
+      .reduce((total: number, tx: Transaction) => total + tx.amount, 0);
+
+    const allocated: number = Math.round(
       (data[selectedMonth]?.budget * category.percentage) / 100,
     );
 

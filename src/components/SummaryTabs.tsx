@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Box } from '@mui/material';
 import MonthTabs from './MonthTabs';
 import BudgetSummaryTable from './BudgetSummaryTable';
@@ -6,9 +6,11 @@ import BudgetSummaryChart from './BudgetSummaryChart';
 import { useAuth } from '../context/AuthContext';
 import './SummaryTabs.scss';
 import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const SummaryTabs = () => {
-  const { user } = useAuth();
+  const authContext = useAuth();
+  const user = authContext ? authContext.user : null;
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const transactions = useSelector(
     (state: RootState) => state.transactions.transactions,
@@ -18,8 +20,8 @@ const SummaryTabs = () => {
     <Box className="summary-tabs">
       <MonthTabs
         className="months-tabs"
-        selectedMonth={selectedMonth}
-        onMonthChange={setSelectedMonth}
+        selectedMonth={selectedMonth.toString()}
+        onMonthChange={(newMonth: string) => setSelectedMonth(Number(newMonth))}
       />
       <div className="summary-table-container">
         {user ? (
@@ -27,14 +29,14 @@ const SummaryTabs = () => {
             userId={user?.id}
             parentTransactions={transactions}
             className="summary-table"
-            selectedMonth={selectedMonth}
+            selectedMonth={selectedMonth.toString()}
           />
         ) : (
           <p>Loading user data...</p>
         )}
         <div className="summary-chart">
           <BudgetSummaryChart
-            selectedMonth={selectedMonth}
+            selectedMonth={selectedMonth.toString()}
             parentTransactions={transactions}
           />
         </div>

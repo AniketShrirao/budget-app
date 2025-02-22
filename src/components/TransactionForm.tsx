@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../store';
 import {
   addTransactionToDB,
   fetchTransactions,
@@ -17,9 +18,10 @@ import './TransactionForm.scss';
 import { Categories } from '../data/categories';
 import { Types } from '../data/types';
 import { categoryTypeMapping } from '../data/categoryTypeMapping';
+import type { Transaction } from '../features/transactionSlice';
 
 const TransactionForm = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [form, setForm] = useState({
     date: '',
     category: 'Other',
@@ -35,26 +37,26 @@ const TransactionForm = () => {
     setForm((prevForm) => ({ ...prevForm, date: today }));
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,
       ...(name === 'category' && {
-        type: categoryTypeMapping[value] || 'Needs',
+        type: categoryTypeMapping[value as keyof typeof categoryTypeMapping] || 'Needs',
       }),
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(
-      addTransactionToDB({
-        id: uuidv4(),
-        ...form,
-        amount: Number(form.amount),
-      }),
-    ).then(() => {
+    const transaction: Transaction = {
+      id: uuidv4(),
+      ...form,
+      amount: Number(form.amount),
+      status: 'pending', // or any default value you want to set
+    };
+    dispatch(addTransactionToDB(transaction)).then(() => {
       dispatch(fetchTransactions());
     });
     setForm({

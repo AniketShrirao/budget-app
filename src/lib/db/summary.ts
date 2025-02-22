@@ -59,7 +59,7 @@ export const updateSummary = async (
     const { data, error } = await supabase
       .from('summary')
       .upsert([{ user_id: userId, month, ...summaryToUpdate }], {
-        onConflict: ['user_id', 'month'],
+        onConflict: 'user_id,month',
       })
       .select('*')
       .single();

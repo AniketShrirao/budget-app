@@ -1,4 +1,4 @@
-import React from 'react';
+
 import {
   Dialog,
   DialogActions,
@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { Transaction } from '../types'; // Assuming you have a type for transactions
+import { Transaction } from '../features/transactionSlice'; // Assuming you have a type for transactions
 
 interface TransactionOverlayProps {
   txn: Transaction | null;

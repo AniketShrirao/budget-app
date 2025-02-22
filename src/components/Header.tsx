@@ -24,18 +24,18 @@ const Header = () => {
       <nav className={`navbar ${menuOpen ? 'open' : ''}`}>
         <NavLink
           to="/transactions"
-          activeClassName="active"
+          className={({ isActive }) => (isActive ? 'active' : '')}
           onClick={toggleMenu}
         >
           Transactions
         </NavLink>
-        <NavLink to="/summary" activeClassName="active" onClick={toggleMenu}>
+        <NavLink to="/summary" className={({ isActive }) => (isActive ? 'active' : '')} onClick={toggleMenu}>
           Summary
         </NavLink>
-        <NavLink to="/income" activeClassName="active" onClick={toggleMenu}>
+        <NavLink to="/income" className={({ isActive }) => (isActive ? 'active' : '')} onClick={toggleMenu}>
           Income
         </NavLink>
-        <NavLink to="/lending" activeClassName="active" onClick={toggleMenu}>
+        <NavLink to="/lending" className={({ isActive }) => (isActive ? 'active' : '')} onClick={toggleMenu}>
           Lending
         </NavLink>
       </nav>

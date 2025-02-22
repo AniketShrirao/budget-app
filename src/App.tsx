@@ -25,7 +25,6 @@ function DebugRouteLogger() {
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const location = useLocation();
 
   useEffect(() => {
     const checkUser = async () => {

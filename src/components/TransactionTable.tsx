@@ -19,32 +19,58 @@ import {
   fetchTransactions,
   removeTransactionFromDB,
 } from '../features/transactionSlice';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import TransactionOverlay from './TransactionOverlay'; // Import TransactionOverlay
 
 import './TransactionTable.scss';
 
-export const TransactionTable = ({ page, setPage }) => {
+interface Transaction {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  type: string;
+  category: string;
+  status: string;
+  important: boolean;
+  recurrence: string;
+}
+
+interface TransactionTableProps {
+  filteredTransactions: Transaction[];
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransactions, page, setPage }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [selectedTxn, setSelectedTxn] = React.useState(null);
+  const [selectedTxn, setSelectedTxn] = React.useState<Transaction | null>(null);
   const theme = useTheme();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
 
-  const transactions = useSelector(
+  const transactions = filteredTransactions || useSelector(
     (state: RootState) => state.transactions.transactions,
   );
   const loading = useSelector((state: RootState) => state.transactions.loading);
 
-  const columns = [
+  interface Column {
+    label: string;
+    field: string;
+    visible: boolean;
+    format?: (value: number) => string;
+    render?: (txn: Transaction) => JSX.Element;
+  }
+
+  const columns: Column[] = [
     { label: 'Date', field: 'date', visible: true },
     { label: 'Description', field: 'description', visible: !isMobileOrTablet },
     {
       label: 'Expense',
       field: 'amount',
       visible: true,
-      format: (value) => `₹${value.toFixed(2)}`,
+      format: (value: number) => `₹${value.toFixed(2)}`,
     },
     { label: 'Type', field: 'type', visible: true },
     { label: 'Category', field: 'category', visible: !isMobileOrTablet },
@@ -53,7 +79,7 @@ export const TransactionTable = ({ page, setPage }) => {
       label: 'Actions',
       field: 'actions',
       visible: true,
-      render: (txn) => (
+      render: (txn: Transaction) => (
         <IconButton onClick={() => handleDelete(txn.id)} color="error">
           <DeleteIcon />
         </IconButton>
@@ -65,20 +91,24 @@ export const TransactionTable = ({ page, setPage }) => {
     dispatch(fetchTransactions());
   }, [dispatch]);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleDelete = async (txnId) => {
+  interface HandleDelete {
+    (txnId: string): Promise<void>;
+  }
+
+  const handleDelete: HandleDelete = async (txnId) => {
     dispatch(removeTransactionFromDB(txnId));
   };
 
-  const getRowColor = ({ important, recurrence }) => {
+  const getRowColor = ({ important, recurrence }: { important: boolean; recurrence: string }) => {
     if (important) return '#FFB6B6';
     if (recurrence === 'Quarterly') return '#B0C4DE';
     if (recurrence === 'Monthly') return '#98FB98';
@@ -86,7 +116,11 @@ export const TransactionTable = ({ page, setPage }) => {
     return 'transparent';
   };
 
-  const handleRowClick = (txn) => {
+  interface HandleRowClick {
+    (txn: Transaction): void;
+  }
+
+  const handleRowClick: HandleRowClick = (txn) => {
     setSelectedTxn(txn);
   };
 
@@ -140,7 +174,7 @@ export const TransactionTable = ({ page, setPage }) => {
                           : txn.recurrence
                         : col.render
                           ? col.render(txn)
-                          : txn[col.field]}
+                          : txn[col.field as keyof Transaction]}
                     </TableCell>
                   ) : null,
                 )}

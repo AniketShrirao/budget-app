@@ -1,16 +1,19 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
-  user: any;
+  user: User | null;
   signInWithGoogle: () => void;
   signOut: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -22,8 +25,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+    supabase.auth.onAuthStateChange(
+      (_, session) => {
         if (session?.user) {
           setUser(session.user || null);
           storeUserInLocalStorage(session.user);
@@ -32,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      setLoading(false);
     };
   }, []);
 
@@ -49,7 +52,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ]),
       );
     } catch (error) {
-      console.error('Error storing user in database:', error.message);
+      if (error instanceof Error) {
+        console.error('Error storing user in database:', error.message);
+      } else {
+        console.error('Error storing user in database:', error);
+      }
     }
   };
 
@@ -65,9 +72,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('users');
     setUser(null);
   };
-
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signOut, loading }}>
       {children}
     </AuthContext.Provider>
   );

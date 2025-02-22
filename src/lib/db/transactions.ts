@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { Transaction } from '../../features/transactionSlice';
 
 // Create Transaction Table if it does not exist
 const createTableIfNotExist = async () => {
@@ -30,7 +31,7 @@ export const createTransaction = async (
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error creating transaction:', error.message);
+    console.error('Error creating transaction:', (error as any).message);
     throw error;
   }
 };

@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import SummaryTabs from '../components/SummaryTabs';
 import { useAuth } from '../context/AuthContext';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const Summary = () => {
-  const { user, loading } = useAuth();
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
