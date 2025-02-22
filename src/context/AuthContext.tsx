@@ -64,7 +64,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       provider: 'google',
       options: {
         redirectTo: import.meta.env.VITE_SUPABASE_REDIRECT_URI,
-        // redirectTo: "https://transcendent-boba-0333d8.netlify.app",
       },
     });
     if (error) console.error('Error logging in:', error.message);
