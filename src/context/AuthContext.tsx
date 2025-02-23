@@ -12,7 +12,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -21,23 +21,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user || null);
+      setLoading(false); // Set loading to false after fetching session
     };
 
     fetchSession();
 
-    supabase.auth.onAuthStateChange((_, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
       if (session?.user) {
         setUser(session.user || null);
         storeUserInLocalStorage(session.user);
+      } else {
+        setUser(null);
       }
+      setLoading(false); // Set loading to false after auth state change
     });
 
     return () => {
-      setLoading(false);
+      authListener.subscription.unsubscribe();
     };
   }, []);
 
-  const storeUserInLocalStorage = (user: any) => {
+  const storeUserInLocalStorage = (user: User) => {
     try {
       localStorage.setItem(
         'users',
