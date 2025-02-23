@@ -162,7 +162,7 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   };
 
   return (
-    <Card className={className} sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
+    <Card className={className} sx={{ maxWidth: 600, mx: 'auto' }}>
       <CardContent>
         <Box
           display="flex"

@@ -2,82 +2,94 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   background-color: black;
   color: white;
-  position: relative;
-}
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
 
-.menu-icon {
-  display: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: white;
-}
+  .icon-ham {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+  }
 
-.navbar {
-  display: flex;
-  gap: 1rem;
-}
-
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  transition: background 0.3s;
-  background: black;
-}
-
-.navbar a:hover,
-.navbar .active {
-  color: burlywood;
-  text-decoration: underline;
-  text-underline-offset: 10px;
-}
-
-.auth-buttons {
-  display: flex;
-}
-
-/* Responsive Styles */
-@media screen and (max-width: 768px) {
   .menu-icon {
-    display: block;
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: white;
   }
 
   .navbar {
-    padding: 30px 0;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    flex-direction: column;
-    background-color: black;
-    display: none;
-    z-index: 1;
-  }
-
-  .navbar.open {
     display: flex;
+    gap: 1rem;
   }
 
   .navbar a {
-    padding: 1rem 0;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    max-width: 100%;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background 0.3s;
+    background: black;
+  }
+
+  .navbar a:hover,
+  .navbar .active {
+    color: burlywood;
+    text-decoration: underline;
+    text-underline-offset: 10px;
   }
 
   .auth-buttons {
-    display: none; /* Optional: Hide auth buttons on small screens */
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Responsive Styles */
+  @media screen and (max-width: 768px) {
+    .menu-icon {
+      display: block;
+    }
+
+    .navbar {
+      position: absolute;
+      width: 100%;
+      flex-direction: column;
+      background-color: black;
+      display: none;
+      z-index: 1;
+      top: calc(50% + 105px);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 100vh;
+    }
+
+    .navbar.open {
+      display: flex;
+    }
+
+    .navbar a {
+      padding: 1rem 0;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      max-width: 100%;
+    }
+
+    .auth-buttons.mobile {
+      display: flex;
+    }
+
+    .auth-buttons.desktop {
+      display: none; /* Hide auth buttons on small screens */
+    }
   }
 }

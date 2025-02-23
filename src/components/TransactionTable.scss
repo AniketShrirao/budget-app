@@ -3,6 +3,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 50px auto;
+  padding: 20px;
 
   .MuiTable-root {
     width: 100%;
@@ -30,14 +31,57 @@
       background-color: #c51162;
     }
   }
-}
 
-@media (max-width: 768px) {
-  .MuiTableCell-root {
-    font-size: 0.9rem;
-  }
+  @media (max-width: 768px) {
+    .MuiTableCell-root {
+      font-size: 0.9rem;
+      padding: 8px 10px;
+    }
 
-  .delete-button {
-    font-size: 0.8rem;
+    .MuiTablePagination-spacer {
+      display: none;
+    }
+
+    .delete-button {
+      font-size: 0.8rem;
+      padding: 4px 8px;
+    }
+
+    .MuiTableHead-root {
+      display: none; // Hide table header on small screens
+    }
+
+    .MuiTableBody-root {
+      display: block;
+
+      .MuiTableRow-root {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+
+        .MuiTableCell-root {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          text-align: right;
+          gap: 10px;
+
+          &:before {
+            content: attr(data-label);
+            font-weight: bold;
+            flex: 1;
+            text-align: left;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+    }
   }
 }

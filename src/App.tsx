@@ -9,9 +9,9 @@ import LandingPage from './pages/LandingPage';
 import Header from './components/Header';
 import Transactions from './pages/Transactions';
 import Summary from './pages/Summary';
-import { useEffect, useState } from 'react';
-import { supabase } from './lib/supabase';
+import { useEffect } from 'react';
 import './App.scss';
+import { useAuth, AuthProvider } from './context/AuthContext';
 
 function DebugRouteLogger() {
   const location = useLocation();
@@ -24,28 +24,21 @@ function DebugRouteLogger() {
 }
 
 function AppContent() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const auth = useAuth();
+  const user = auth?.user;
+  const loading = auth?.loading;
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setIsAuthenticated(!!data.user);
-    };
-    checkUser();
-  }, []);
-
-  if (isAuthenticated === null) return <div>Loading...</div>; // Prevents flickering
+  if (loading) return <div>Loading...</div>; // Prevents flickering
 
   return (
     <>
       <Header />
       <DebugRouteLogger />
       <Routes>
-        {/* ✅ Redirect only from "/" if authenticated */}
         <Route
           path="/"
           element={
-            isAuthenticated ? (
+            user ? (
               <Navigate to="/transactions" replace />
             ) : (
               <LandingPage />
@@ -62,7 +55,9 @@ function AppContent() {
 export default function App() {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }

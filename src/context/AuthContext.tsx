@@ -63,14 +63,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signInWithGoogle = async () => {
-    console.log("signing in with google", import.meta.env.VITE_SUPABASE_REDIRECT_URI);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: import.meta.env.VITE_SUPABASE_REDIRECT_URI,
-      },
-    });
-    if (error) console.error('Error logging in:', error.message);
+
+    if(import.meta.env.MODE === 'development') {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+      if (error) console.error("Error logging in:", error.message);    
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: import.meta.env.VITE_SUPABASE_REDIRECT_URI,
+        },
+      });
+      if (error) console.error('Error logging in:', error.message);
+    }
   };
 
   const signOut = async () => {

@@ -65,7 +65,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
 
   const columns: Column[] = [
     { label: 'Date', field: 'date', visible: true },
-    { label: 'Description', field: 'description', visible: !isMobileOrTablet },
+    { label: 'Description', field: 'description', visible: true },
     {
       label: 'Expense',
       field: 'amount',
@@ -147,7 +147,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
 
   return (
     <>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className="transaction-table">
         <Table>
           <TableHead>
             <TableRow>
@@ -167,7 +167,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
               >
                 {columns.map((col, index) =>
                   col.visible ? (
-                    <TableCell key={index}>
+                    <TableCell key={index} data-label={col.label}>
                       {col.field === 'status'
                         ? txn.important
                           ? 'Important'
@@ -184,7 +184,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 50]}
+        rowsPerPageOptions={isMobileOrTablet ? [] : [10, 25, 50]}
         component="div"
         count={transactions.length}
         rowsPerPage={rowsPerPage}

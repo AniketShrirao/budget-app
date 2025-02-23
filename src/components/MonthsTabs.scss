@@ -5,6 +5,17 @@
 
   .transaction-table {
     margin: 20px auto;
+    padding: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+
+    .transaction-table {
+      margin: 20px 0 0;
+      overflow-x: hidden;
+    }
+    
   }
 
   .MuiTabScrollButton-horizontal.MuiTabs-scrollButtons {
