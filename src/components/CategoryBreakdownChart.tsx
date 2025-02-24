@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -9,7 +9,6 @@ import {
 } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Transaction } from '../features/transactionSlice';
 import { Card, CardContent, Typography } from '@mui/material';
 import NoDataAvailable from './NoDataAvailable';
 
@@ -44,31 +43,34 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
     new Set(currentMonthTransactions.map((tx) => tx.category)),
   );
 
-  if (!transactionCategories.length) {
-    return (
-      <Card style={{ marginTop: '20px' }}>
-        <CardContent>
-          <Typography variant="h6" align="center" gutterBottom>
-            Category-wise Breakdown
-          </Typography>
-          <NoDataAvailable />
-        </CardContent>
-      </Card>
-    );
-  }
+  const [activeCategories, setActiveCategories] = useState(
+    transactionCategories.reduce((acc, category) => {
+      acc[category] = true;
+      return acc;
+    }, {} as Record<string, boolean>)
+  );
 
-  const chartData = transactionCategories.map((category) => {
-    const spent = currentMonthTransactions
-      .filter((tx) => tx.category === category)
-      .reduce((total, tx) => total + tx.amount, 0);
+  const handleLegendClick = (data: any) => {
+    setActiveCategories((prev) => ({
+      ...prev,
+      [data.value]: !prev[data.value],
+    }));
+  };
 
-    return {
-      name: category,
-      value: spent,
-    };
-  });
+  const filteredChartData = transactionCategories
+    .map((category) => {
+      const spent = currentMonthTransactions
+        .filter((tx) => tx.category === category)
+        .reduce((total, tx) => total + tx.amount, 0);
 
-  const hasSpentValues = chartData.some((data) => data.value > 0);
+      return {
+        name: category,
+        value: spent,
+        active: activeCategories[category],
+      };
+    });
+
+  const hasSpentValues = filteredChartData.some((data) => data.value > 0);
 
   if (!hasSpentValues) {
     return (
@@ -91,6 +93,14 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
     outerRadius,
     percent,
     index,
+  }: {
+    cx: number;
+    cy: number;
+    midAngle: number;
+    innerRadius: number;
+    outerRadius: number;
+    percent: number;
+    index: number;
   }) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
@@ -106,7 +116,7 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
         dominantBaseline="central"
         style={{ fontSize: '12px', fontWeight: 'bold' }}
       >
-        {`${chartData[index].name}: ${(percent * 100).toFixed(0)}%`}
+        {`${filteredChartData[index].name}: ${(percent * 100).toFixed(0)}%`}
       </text>
     );
   };
@@ -130,7 +140,7 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={chartData}
+                data={filteredChartData.filter((data) => data.active)}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -143,15 +153,16 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                 animationDuration={800}
                 animationEasing="ease-out"
               >
-                {chartData.map((_, index) => (
+                {filteredChartData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
+                    fillOpacity={entry.active ? 1 : 0.3}
                   />
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => `₹${value}`}
+                formatter={(value: number) => `₹${value}`}
                 contentStyle={{
                   backgroundColor: '#333',
                   color: '#fff',
@@ -164,6 +175,7 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                 verticalAlign="bottom"
                 align="center"
                 wrapperStyle={{ fontSize: '12px', fontWeight: '500' }}
+                onClick={handleLegendClick}
               />
             </PieChart>
           </ResponsiveContainer>

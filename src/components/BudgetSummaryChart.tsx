@@ -11,7 +11,6 @@ import {
 } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Transaction } from '../features/transactionSlice';
 import NoDataAvailable from './NoDataAvailable';
 import { Card, CardContent, Typography } from '@mui/material';
 
@@ -66,7 +65,7 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
       .filter((tx) => tx.type === type)
       .reduce((total, tx) => total + tx.amount, 0);
 
-    const category = categoryPercentages.find((cat) => cat.name === type);
+    const category = categoryPercentages.find((cat: { name: string }) => cat.name === type);
     const allocated = category ? Math.round((budget * category.percentage) / 100) : 0;
 
     return {
