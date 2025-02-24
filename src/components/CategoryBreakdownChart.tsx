@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Card, CardContent, Typography } from '@mui/material';
 import NoDataAvailable from './NoDataAvailable';
+import { Transaction } from '../features/transactionSlice';
 
 const COLORS = [
   '#0088FE',
