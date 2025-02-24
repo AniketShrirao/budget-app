@@ -12,6 +12,9 @@ import Summary from './pages/Summary';
 import { useEffect } from 'react';
 import './App.scss';
 import { useAuth, AuthProvider } from './context/AuthContext';
+import Lending from './pages/Lending';
+import Income from './pages/Income';
+import Loading from './components/Loading';
 
 function DebugRouteLogger() {
   const location = useLocation();
@@ -28,7 +31,9 @@ function AppContent() {
   const user = auth?.user;
   const loading = auth?.loading;
 
-  if (loading) return <div>Loading...</div>; // Prevents flickering
+  if (loading) {
+    return <Loading message="Initializing app..." />;
+  }
 
   return (
     <>
@@ -47,6 +52,9 @@ function AppContent() {
         />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/summary" element={<Summary />} />
+        <Route path="/lending" element={<Lending />} />
+        <Route path="/income" element={<Income />} />
+        <Route path="*" element={<div>Not Found</div>} />
       </Routes>
     </>
   );

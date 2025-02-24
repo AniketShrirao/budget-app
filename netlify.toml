@@ -6,3 +6,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[functions]
+  directory = "netlify/functions"
+
+[[scheduled]]
+  name = "sendPeriodicReminders"
+  cron = "0 0 * * *" # Runs every day at midnight

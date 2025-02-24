@@ -1,0 +1,68 @@
+.add-lending-form-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+
+  .MuiTypography-h6 {
+    color: #1A1A1A;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .add-lending-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .MuiFormControl-root {
+      .MuiInputLabel-root {
+        color: #6B7280;
+      }
+
+      .MuiOutlinedInput-root {
+        background: #F9FAFB;
+        border-radius: 8px;
+        
+        &:hover .MuiOutlinedInput-notchedOutline {
+          border-color: #9CA3AF;
+        }
+        
+        &.Mui-focused .MuiOutlinedInput-notchedOutline {
+          border-color: #6366F1;
+        }
+      }
+
+      .MuiInputLabel-root.Mui-focused {
+        color: #6366F1;
+      }
+    }
+
+    .MuiButton-root {
+      margin-top: 8px;
+      background: #6366F1;
+      color: #FFFFFF;
+      border-radius: 8px;
+      font-weight: 500;
+      text-transform: none;
+      font-size: 0.9375rem;
+      box-shadow: 0 1px 2px rgba(99, 102, 241, 0.05);
+
+      &:hover {
+        background: #4F46E5;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+
+    .add-lending-form {
+      gap: 16px;
+
+      .MuiButton-root {
+        padding: 10px 20px;
+      }
+    }
+  }
+}

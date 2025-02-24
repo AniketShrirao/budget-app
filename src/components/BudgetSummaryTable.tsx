@@ -17,6 +17,7 @@ import {
 } from '../features/summarySlice';
 import { store } from '../store';
 import { Transaction } from '../features/transactionSlice';
+import Loading from './Loading';
 
 const DEFAULT_CATEGORIES = [
   { name: 'Needs', percentage: 20 },
@@ -39,7 +40,7 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   parentTransactions,
 }) => {
   const dispatch = useDispatch<typeof store.dispatch>();
-  const { data, error } = useSelector((state: { summary: any }) => state.summary);
+  const { data, error, loading } = useSelector((state: { summary: any }) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [tempCategories, setTempCategories] = useState<{ name: string; percentage: number }[]>([]);
   const [currentMonthTransactions, setCurrentMonthTransactions] = useState<any[]>([]);
@@ -160,6 +161,11 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       }),
     );
   };
+
+  if (loading) {
+    return <Loading message="Loading budget summary..." />;
+  }
+
 
   return (
     <Card className={className} sx={{ maxWidth: 600, mx: 'auto' }}>
