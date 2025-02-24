@@ -31,6 +31,25 @@
     margin: 20px 0;
   }
 
+  .category-breakdown-chart {
+    flex: 1;
+    max-width: 50%;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+
+    .recharts-tooltip-label {
+      display: none;
+    }
+
+    .recharts-layer .recharts-pie-sector path {
+      outline: none;
+    }
+
+  }
+
   @media (max-width: 768px) {
     .summary-table-container {
       flex-direction: column;
@@ -38,7 +57,8 @@
     }
 
     .summary-table,
-    .summary-chart {
+    .summary-chart,
+    .category-breakdown-chart {
       max-width: 100%;
       min-width: 100%;
     }

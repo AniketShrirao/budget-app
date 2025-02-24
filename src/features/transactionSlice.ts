@@ -29,7 +29,7 @@ const initialState: TransactionState = {
 // Fetch transactions from Supabase based on user_id from localStorage
 export const fetchTransactions = createAsyncThunk(
   'transactions/fetch',
-  async (_) => {
+  async () => {
     try {
       const storedUser = localStorage.getItem('users');
       const user = storedUser ? JSON.parse(storedUser)[0] : null;

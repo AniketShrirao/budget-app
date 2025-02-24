@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { useDispatch } from 'react-redux';
+import { fetchTransactions } from '../features/transactionSlice';
+import { AppDispatch } from '../store';
 
 interface AuthContextType {
   user: User | null;
@@ -14,6 +17,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -21,7 +25,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user || null);
-      setLoading(false); // Set loading to false after fetching session
+      setLoading(false);
+
+      if (session?.user) {
+        dispatch(fetchTransactions());
+      }
     };
 
     fetchSession();
@@ -30,16 +38,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (session?.user) {
         setUser(session.user || null);
         storeUserInLocalStorage(session.user);
+        dispatch(fetchTransactions());
       } else {
         setUser(null);
       }
-      setLoading(false); // Set loading to false after auth state change
+      setLoading(false);
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [dispatch]);
 
   const storeUserInLocalStorage = (user: User) => {
     try {
@@ -63,10 +72,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signInWithGoogle = async () => {
-
-    if(import.meta.env.MODE === 'development') {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
-      if (error) console.error("Error logging in:", error.message);    
+    if (import.meta.env.MODE === 'development') {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) console.error('Error logging in:', error.message);
     } else {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

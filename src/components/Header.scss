@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: 1rem 2rem;
   background-color: black;
   color: white;
 
@@ -14,8 +14,8 @@
   .icon-ham {
     display: flex;
     justify-content: space-between;
-    width: 100%;
     padding: 20px;
+    flex: 0 1 20%;
   }
 
   .menu-icon {
@@ -50,10 +50,23 @@
   .auth-buttons {
     display: flex;
     gap: 10px;
+
+    &.mobile {
+      display: none;
+    }
   }
 
   /* Responsive Styles */
   @media screen and (max-width: 768px) {
+
+    .header {
+      padding: 1rem 0;
+    }
+
+    .icon-ham {
+      flex: 1;
+    }
+
     .menu-icon {
       display: block;
     }

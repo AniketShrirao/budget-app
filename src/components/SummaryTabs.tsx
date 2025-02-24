@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import MonthTabs from './MonthTabs';
 import BudgetSummaryTable from './BudgetSummaryTable';
 import BudgetSummaryChart from './BudgetSummaryChart';
+import CategoryBreakdownChart from './CategoryBreakdownChart';
 import { useAuth } from '../context/AuthContext';
 import './SummaryTabs.scss';
 import { useSelector } from 'react-redux';
@@ -37,9 +38,13 @@ const SummaryTabs = () => {
         <div className="summary-chart">
           <BudgetSummaryChart
             selectedMonth={selectedMonth.toString()}
-            parentTransactions={transactions}
           />
         </div>
+      </div>
+      <div className="category-breakdown-chart">
+        <CategoryBreakdownChart
+          selectedMonth={selectedMonth.toString()}
+        />
       </div>
     </Box>
   );
