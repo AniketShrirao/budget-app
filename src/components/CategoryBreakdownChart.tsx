@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   PieChart,
   Pie,
@@ -34,21 +34,26 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   );
 
   // Filter transactions for the selected month
-  const currentMonthTransactions = transactions.filter(
-    (tx) => new Date(tx.date).getMonth() + 1 === Number(selectedMonth),
-  );
+  const [currentMonthTransactions, setCurrentMonthTransactions] = useState<Transaction[]>([]);
+  const [transactionCategories, setTransactionCategories] = useState<string[]>([]);
+  const [activeCategories, setActiveCategories] = useState<Record<string, boolean>>({});
 
-  // Get unique transaction categories
-  const transactionCategories = Array.from(
-    new Set(currentMonthTransactions.map((tx) => tx.category)),
-  );
+  useEffect(() => {
+    const filteredTransactions = transactions.filter(
+      (tx) => new Date(tx.date).getMonth() + 1 === Number(selectedMonth),
+    );
 
-  const [activeCategories, setActiveCategories] = useState(
-    transactionCategories.reduce((acc, category) => {
+    const categories = Array.from(
+      new Set(filteredTransactions.map((tx) => tx.category)),
+    );
+
+    setCurrentMonthTransactions(filteredTransactions);
+    setTransactionCategories(categories);
+    setActiveCategories(categories.reduce((acc, category) => {
       acc[category] = true;
       return acc;
-    }, {} as Record<string, boolean>)
-  );
+    }, {} as Record<string, boolean>));
+  }, [selectedMonth, transactions]);
 
   const handleLegendClick = (data: any) => {
     setActiveCategories((prev) => ({
