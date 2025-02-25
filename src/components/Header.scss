@@ -1,108 +1,218 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: black;
-  color: white;
+  background-color: #1a1a1a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
 
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  .icon-ham {
+  .toolbar {
+    min-height: var(--header-height);
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    flex: 0 1 20%;
-  }
+    align-items: center;
+    padding: 0 16px;
 
-  .menu-icon {
-    display: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: white;
-  }
-
-  .navbar {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .navbar a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background 0.3s;
-    background: black;
-  }
-
-  .navbar a:hover,
-  .navbar .active {
-    color: burlywood;
-    text-decoration: underline;
-    text-underline-offset: 10px;
-  }
-
-  .auth-buttons {
-    display: flex;
-    gap: 10px;
-
-    &.mobile {
-      display: none;
-    }
-  }
-
-  /* Responsive Styles */
-  @media screen and (max-width: 768px) {
-
-    .header {
-      padding: 1rem 0;
+    .logo {
+      font-weight: 600;
+      color: white;
+      margin-right: 32px;
     }
 
-    .icon-ham {
+    .desktop-nav {
       flex: 1;
+      display: flex;
+      gap: 8px;
+
+      @media (max-width: 900px) {
+        display: none;
+      }
+
+      a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        transition: background 0.3s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
     }
 
-    .menu-icon {
-      display: block;
-    }
-
-    .navbar {
-      position: absolute;
-      width: 100%;
-      flex-direction: column;
-      background-color: black;
+    .mobile-menu-button {
       display: none;
-      z-index: 1;
-      top: calc(50% + 105px);
-      left: 50%;
-      transform: translate(-50%, -50%);
-      height: 100vh;
+      margin-left: auto;
+
+      @media (max-width: 900px) {
+        display: block;
+      }
+    }
+  }
+}
+
+.mobile-menu {
+  .MuiBackdrop-root {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .MuiPaper-root {
+    width: 100% !important;
+    height: 100vh !important;
+    position: fixed !important;
+    background-color: #1a1a1a !important;
+    border-radius: 0;
+
+    .MuiList-root {
+      height: 100% !important;
+      padding: 20px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
     }
 
-    .navbar.open {
+    .mobile-menu-header {
+      flex-shrink: 0;
+      padding: 16px;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      .mobile-user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .user-name {
+          color: white;
+        }
+      }
+
+      .close-button {
+        svg { 
+          fill: white;
+        }
+        padding: 8px;
+        transition: background 0.3s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
     }
 
-    .navbar a {
-      padding: 1rem 0;
-      text-align: center;
-      width: 100%;
+    .MuiList-root > div:not(.mobile-menu-header):not(.mobile-menu-footer) {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      max-width: 100%;
+      padding: 24px 0;
     }
 
-    .auth-buttons.mobile {
-      display: flex;
+    .MuiMenuItem-root {
+      color: white !important;
+      font-size: 1.25rem;
+      padding: 16px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: background 0.3s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &.active {
+        background: rgba(255, 255, 255, 0.2);
+      }
     }
 
-    .auth-buttons.desktop {
-      display: none; /* Hide auth buttons on small screens */
+    .mobile-menu-footer {
+      flex-shrink: 0;
+      padding: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: auto;
+
+      .MuiButton-root {
+        color: white;
+        font-size: 1rem;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        transition: background 0.3s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
     }
+  }
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  padding-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+
+  @media (max-width: 600px) {
+    padding-top: var(--header-height-mobile);
+  }
+}
+
+:root {
+  --header-height: 64px;
+  --header-height-mobile: 56px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mobile-menu-popover {
+  .MuiPopover-paper {
+    max-height: 95vh !important;
+    padding: 20px 0;
   }
 }

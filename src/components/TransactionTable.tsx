@@ -21,6 +21,7 @@ import {
 } from '../features/transactionSlice';
 import { RootState, AppDispatch } from '../store';
 import TransactionOverlay from './TransactionOverlay'; // Import TransactionOverlay
+import { toast } from 'react-toastify'; // Add this import
 
 import './TransactionTable.scss';
 
@@ -80,7 +81,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
       field: 'actions',
       visible: true,
       render: (txn: Transaction) => (
-        <IconButton onClick={() => handleDelete(txn.id)} color="error">
+        <IconButton 
+          onClick={(e) => {
+            e.stopPropagation(); // Stop event propagation
+            handleDelete(txn.id);
+          }} 
+          color="error"
+        >
           <DeleteIcon />
         </IconButton>
       ),
@@ -105,7 +112,16 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
   }
 
   const handleDelete: HandleDelete = async (txnId) => {
-    dispatch(removeTransactionFromDB(txnId));
+    try {
+      await dispatch(removeTransactionFromDB(txnId)).unwrap();
+      toast.success('Transaction deleted successfully!', {
+        style: { background: '#4caf50', color: 'white' }
+      });
+    } catch (error) {
+      toast.error('Failed to delete transaction', {
+        style: { background: '#d32f2f', color: 'white' }
+      });
+    }
   };
 
   const getRowColor = ({ important, recurrence }: { important: boolean; recurrence: string }) => {

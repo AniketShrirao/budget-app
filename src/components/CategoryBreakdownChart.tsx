@@ -27,6 +27,12 @@ interface CategoryBreakdownChartProps {
   selectedMonth: string;
 }
 
+interface ChartData {
+  name: string;
+  value: number;
+  active: boolean;
+}
+
 const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   selectedMonth,
 }) => {
@@ -63,8 +69,9 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
     }));
   };
 
-  const filteredChartData = transactionCategories
-    .map((category) => {
+  // First calculate base chart data
+  const baseChartData: ChartData[] = transactionCategories
+    .map((category): ChartData => {
       const spent = currentMonthTransactions
         .filter((tx) => tx.category === category)
         .reduce((total, tx) => total + tx.amount, 0);
@@ -75,6 +82,10 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
         active: activeCategories[category],
       };
     });
+
+  // Then filter and sort
+  const filteredChartData: ChartData[] = baseChartData
+    .sort((a: ChartData, b: ChartData) => b.value - a.value);
 
   const hasSpentValues = filteredChartData.some((data) => data.value > 0);
 
@@ -108,6 +119,9 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
     percent: number;
     index: number;
   }) => {
+    // Only show labels for sectors that are 3% or larger
+    if ((percent * 100) < 3) return null;
+
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -142,7 +156,7 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
           This chart shows the breakdown of your spending by category for the
           selected month.
         </Typography>
-        <div style={{ width: '100%', height: '320px', padding: '10px' }}>
+        <div style={{ width: '100%', height: '400px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -150,11 +164,13 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={120}
+                outerRadius={150}
+                innerRadius={filteredChartData.length === 1 ? 0 : 60}
                 fill="#8884d8"
                 dataKey="value"
                 label={renderCustomLabel}
-                paddingAngle={5}
+                paddingAngle={filteredChartData.length === 1 ? 0 : 3}
+                minAngle={15}
                 animationBegin={0}
                 animationDuration={800}
                 animationEasing="ease-out"
@@ -173,6 +189,8 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                   backgroundColor: '#333',
                   color: '#fff',
                   borderRadius: '5px',
+                  padding: '10px',
+                  fontSize: '14px'
                 }}
                 itemStyle={{ color: '#fff' }}
               />

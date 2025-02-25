@@ -22,23 +22,45 @@ const initialState: LendingState = {
   error: null,
 };
 
-export const fetchLendings = createAsyncThunk('lendings/fetch', async () => {
-  const { data, error } = await supabase.from('lendings').select('*');
+export const fetchLendings = createAsyncThunk('lendings/fetch', async (userEmail: string) => {
+  const { data, error } = await supabase
+    .from('lendings')
+    .select('*')
+    .eq('user_email', userEmail);
+  
   if (error) throw new Error(error.message);
   return data;
 });
 
-export const deleteLending = createAsyncThunk('lendings/delete', async (id: string) => {
-  const { error } = await supabase.from('lendings').delete().eq('id', id);
-  if (error) throw new Error(error.message);
-  return id;
-});
+export const deleteLending = createAsyncThunk(
+  'lendings/delete', 
+  async ({ id, userEmail }: { id: string; userEmail: string }) => {
+    const { error } = await supabase
+      .from('lendings')
+      .delete()
+      .eq('id', id)
+      .eq('user_email', userEmail);
+    
+    if (error) throw new Error(error.message);
+    return id;
+  }
+);
 
-export const updateLending = createAsyncThunk('lendings/update', async (lending: Lending) => {
-  const { error } = await supabase.from('lendings').update(lending).eq('id', lending.id);
-  if (error) throw new Error(error.message);
-  return lending;
-});
+export const updateLending = createAsyncThunk(
+  'lendings/update', 
+  async ({ lending, userEmail }: { lending: Lending; userEmail: string }) => {
+    const { data, error } = await supabase
+      .from('lendings')
+      .update(lending)
+      .eq('id', lending.id)
+      .eq('user_email', userEmail)
+      .select()
+      .single();
+    
+    if (error) throw new Error(error.message);
+    return data;
+  }
+);
 
 const lendingSlice = createSlice({
   name: 'lendings',

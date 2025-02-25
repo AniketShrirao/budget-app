@@ -1,25 +1,27 @@
 .landing-page {
+  min-height: calc(100vh - 64px); // Subtract header height
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(45deg, #000000, #caa0ae);
-  color: white;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+
+  .auth-container {
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+  }
 
   .intro {
-    text-align: center;
-    width: 100%;
-  }
+    .title {
+      color: #1A1A1A;
+      margin-bottom: 24px;
+    }
 
-  .title {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .description {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+    .description {
+      color: #4B5563;
+      max-width: 600px;
+      margin: 0 auto;
+    }
   }
 
   .sign-in-button {
@@ -47,5 +49,16 @@
     .sign-in-button {
       font-size: 1rem;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

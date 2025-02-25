@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import AddLendingForm from "../components/AddLendingForm";
 import LendingReminders from "../components/LendingReminders";
-import { Container, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import './Lending.scss';
 
 const Lending = () => {
@@ -15,9 +15,6 @@ const Lending = () => {
 
   return (
     <Container className="lending-container" maxWidth={false}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Lending Management
-      </Typography>
       <div className="lending-grid">
         <div className="lending-form">
           <AddLendingForm onAddLending={handleAddLending} />

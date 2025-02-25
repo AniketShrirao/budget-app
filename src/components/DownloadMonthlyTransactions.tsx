@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Button } from '@mui/material';
 import { CSVLink } from 'react-csv';
+import { toast } from 'react-toastify';
 
 const DownloadTransactions: React.FC<{ selectedMonth: string }> = ({ selectedMonth }) => {
   const transactions = useSelector((state: RootState) => state.transactions.transactions);
@@ -19,9 +20,27 @@ const DownloadTransactions: React.FC<{ selectedMonth: string }> = ({ selectedMon
     Type: tx.type,
   }));
 
+  const handleDownload = () => {
+    if (csvData.length === 0) {
+      toast.info('No transactions found for selected month', {
+        style: { background: '#2196f3', color: 'white' },
+        icon: () => <span role="img" aria-label="info">ℹ️</span>
+      });
+      return;
+    }
+
+    toast.success('Downloading transactions...', {
+      style: { background: '#4caf50', color: 'white' }
+    });
+  };
+
   return (
-    <Button variant="contained" color="primary">
-      <CSVLink data={csvData} filename={`transactions-${selectedMonth}.csv`} style={{ color: '#fff', textDecoration: 'none' }}>
+    <Button variant="contained" color="primary" onClick={handleDownload}>
+      <CSVLink 
+        data={csvData} 
+        filename={`transactions-${selectedMonth}.csv`} 
+        style={{ color: '#fff', textDecoration: 'none' }}
+      >
         Download Transactions
       </CSVLink>
     </Button>

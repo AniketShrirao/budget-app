@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
 import MonthTabs from './MonthTabs';
 import BudgetSummaryTable from './BudgetSummaryTable';
 import BudgetSummaryChart from './BudgetSummaryChart';
@@ -16,6 +16,28 @@ const SummaryTabs = () => {
   const transactions = useSelector(
     (state: RootState) => state.transactions.transactions,
   );
+
+  if (!transactions.length) {
+    return (
+      <Box className="summary-tabs">
+        <MonthTabs
+          className="months-tabs"
+          selectedMonth={selectedMonth.toString()}
+          onMonthChange={(newMonth: string) => setSelectedMonth(Number(newMonth))}
+        />
+        <Card sx={{ width: '100%', mt: 2 }}>
+          <CardContent>
+            <Typography variant="h6" align="center" color="textSecondary">
+              No transactions available for this month.
+            </Typography>
+            <Typography align="center" color="textSecondary">
+              Add transactions to see your budget summary.
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
 
   return (
     <Box className="summary-tabs">

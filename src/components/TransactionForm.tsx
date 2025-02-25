@@ -19,6 +19,7 @@ import { Categories } from '../data/categories';
 import { Types } from '../data/types';
 import { categoryTypeMapping } from '../data/categoryTypeMapping';
 import type { Transaction } from '../features/transactionSlice';
+import { toast } from 'react-toastify';
 
 const TransactionForm = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -48,26 +49,45 @@ const TransactionForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (Number(form.amount) <= 0) {
+      toast.error('Amount must be greater than 0', {
+        style: { background: '#d32f2f', color: 'white' }
+      });
+      return;
+    }
+
     const transaction: Transaction = {
       id: uuidv4(),
       ...form,
       amount: Number(form.amount),
-      status: 'pending', // or any default value you want to set
+      status: 'pending',
     };
-    dispatch(addTransactionToDB(transaction)).then(() => {
-      dispatch(fetchTransactions());
-    });
-    setForm({
-      date: '',
-      category: 'Other',
-      description: '',
-      amount: '',
-      type: 'Needs',
-      important: false,
-      recurrence: 'None',
-    });
+
+    try {
+      await dispatch(addTransactionToDB(transaction)).unwrap();
+      await dispatch(fetchTransactions()).unwrap();
+      
+      toast.success('Transaction added successfully!', {
+        style: { background: '#4caf50', color: 'white' }
+      });
+
+      setForm({
+        date: moment().format('YYYY-MM-DD'),
+        category: 'Other',
+        description: '',
+        amount: '',
+        type: 'Needs',
+        important: false,
+        recurrence: 'None',
+      });
+    } catch (error) {
+      toast.error('Failed to add transaction. Please try again.', {
+        style: { background: '#d32f2f', color: 'white' }
+      });
+    }
   };
 
   return (

@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import NoDataAvailable from './NoDataAvailable';
 import { Card, CardContent, Typography } from '@mui/material';
+import { DEFAULT_CATEGORIES } from '../lib/db/summary';
 
 const COLORS = {
   Allocated: '#4CAF50', // Green for Allocated
@@ -51,8 +52,9 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
     );
   }
 
+  // Use default values if summary data is empty
   const budget = summaryData[selectedMonth]?.budget ?? 100;
-  const categoryPercentages = summaryData[selectedMonth]?.categories ?? [];
+  const categoryPercentages = summaryData[selectedMonth]?.categories ?? DEFAULT_CATEGORIES;
 
   interface ChartData {
     type: string;
@@ -65,12 +67,14 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
       .filter((tx) => tx.type === type)
       .reduce((total, tx) => total + tx.amount, 0);
 
-    const category = categoryPercentages.find((cat: { name: string }) => cat.name === type);
-    const allocated = category ? Math.round((budget * category.percentage) / 100) : 0;
+    // Always use a category from DEFAULT_CATEGORIES if none found
+    const category = categoryPercentages.find((cat: { name: string }) => cat.name === type) 
+      ?? DEFAULT_CATEGORIES.find(cat => cat.name === type)
+      ?? { name: type, percentage: 0 };
 
     return {
       type,
-      Allocated: Math.round(allocated),
+      Allocated: Math.round((budget * category.percentage) / 100),
       Spent: Math.round(spent),
     };
   });

@@ -9,7 +9,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      port: 3000
+      port: 3000,
+      hmr: {
+        overlay: false
+      }
     },
     define: {
       // Expose env variables to your app

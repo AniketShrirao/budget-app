@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   Typography,
   Button,
   Alert,
+  InputAdornment,
 } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,6 +19,7 @@ import {
 import { store } from '../store';
 import { Transaction } from '../features/transactionSlice';
 import Loading from './Loading';
+import { toast } from 'react-toastify';
 
 const DEFAULT_CATEGORIES = [
   { name: 'Needs', percentage: 20 },
@@ -46,6 +48,7 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   const [currentMonthTransactions, setCurrentMonthTransactions] = useState<any[]>([]);
   const [modifiedCategories, setModifiedCategories] = useState<{ [key: string]: boolean }>({});
   const [totalError, setTotalError] = useState('');
+  const [localBudget, setLocalBudget] = useState<string>('');
 
   useEffect(() => {
     dispatch(fetchMonthlySummary({ userId, month: selectedMonth }));
@@ -67,6 +70,10 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
     );
   }, [parentTransactions, data, selectedMonth]);
 
+  useEffect(() => {
+    setLocalBudget(data[selectedMonth]?.budget?.toString() ?? '100');
+  }, [data, selectedMonth]);
+
   const budget = data[selectedMonth]?.budget ?? 100;
 
   const calculateSpent = (categoryName: string): number => {
@@ -79,18 +86,42 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       .reduce((total: number, transaction: Transaction) => total + transaction.amount, 0);
   };
 
-  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(
-      updateMonthlySummary({
+  const handleBudgetChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalBudget(e.target.value);
+  }, []);
+
+  const handleBudgetBlur = useCallback(() => {
+    const newValue = Number(localBudget);
+    if (!isNaN(newValue) && newValue !== data[selectedMonth]?.budget) {
+      dispatch(updateMonthlySummary({
         userId,
         month: selectedMonth,
         updatedSummary: {
           ...data[selectedMonth],
-          budget: parseFloat(e.target.value) || 0,
-        },
-      }),
-    );
-  };
+          budget: newValue
+        }
+      }));
+    } else {
+      setLocalBudget(data[selectedMonth]?.budget?.toString() ?? '100');
+    }
+    setIsEditingBudget(false);
+  }, [localBudget, userId, selectedMonth, data]);
+
+  const BudgetInput = useMemo(() => (
+    <TextField
+      type="number"
+      value={localBudget}
+      onChange={handleBudgetChange}
+      onBlur={handleBudgetBlur}
+      placeholder="Enter monthly salary"
+      fullWidth
+      size="small"
+      autoFocus
+      InputProps={{
+        startAdornment: <InputAdornment position="start">₹</InputAdornment>
+      }}
+    />
+  ), [localBudget, handleBudgetChange, handleBudgetBlur]);
 
   interface Category {
     name: string;
@@ -110,6 +141,16 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   };
 
   const handleUpdateSummary = () => {
+    // Check if any categories were modified
+    const hasModifiedCategories = Object.values(modifiedCategories).some(modified => modified);
+
+    if (!hasModifiedCategories) {
+      toast.error('No changes to update', {
+        style: { background: '#d32f2f', color: 'white' }
+      });
+      return;
+    }
+
     const totalModified = tempCategories
       .filter((cat) => modifiedCategories[cat.name])
       .reduce((sum, cat) => sum + cat.percentage, 0);
@@ -159,13 +200,16 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
           transactions: currentMonthTransactions,
         },
       }),
-    );
+    ).then(() => {
+      toast.success('Budget summary updated successfully!', {
+        style: { background: '#4caf50', color: 'white' }
+      });
+    });
   };
 
   if (loading) {
     return <Loading message="Loading budget summary..." />;
   }
-
 
   return (
     <Card className={className} sx={{ maxWidth: 600, mx: 'auto' }}>
@@ -188,15 +232,7 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
             sx={{ minWidth: '120px' }}
           >
             {isEditingBudget ? (
-              <TextField
-                type="number"
-                value={budget}
-                onChange={handleBudgetChange}
-                onBlur={() => setIsEditingBudget(false)}
-                size="small"
-                autoFocus
-                sx={{ width: 80 }}
-              />
+              BudgetInput
             ) : (
               <Typography
                 variant="h6"
@@ -272,4 +308,4 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   );
 };
 
-export default BudgetSummaryTable;
+export default React.memo(BudgetSummaryTable);

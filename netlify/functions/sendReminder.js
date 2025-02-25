@@ -10,13 +10,10 @@ const transporter = nodemailer.createTransport({
 });
 
 export const handler = async (event, context) => {
-  console.log('Received event:', event);
-  console.log('Received context:', context);
 
   let parsedBody;
   try {
     parsedBody = JSON.parse(event.body);
-    console.log('Parsed body:', parsedBody);
   } catch (error) {
     console.error('Failed to parse body:', error);
     return {
@@ -36,7 +33,6 @@ export const handler = async (event, context) => {
       : `Reminder to ask ${borrower} for payback of ₹${amount}`,
   };
 
-  console.log('Mail options:', mailOptions);
 
   try {
     const info = await transporter.sendMail(mailOptions);

@@ -7,9 +7,11 @@ import { AppDispatch } from '../store';
 
 interface AuthContextType {
   user: User | null;
-  signInWithGoogle: () => void;
-  signOut: () => void;
   loading: boolean;
+  signUp: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -86,6 +88,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
+    if (error) throw error;
+  };
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem('users');
@@ -93,7 +114,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signOut, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      signUp,
+      signIn,
+      signInWithGoogle, 
+      signOut, 
+      loading 
+    }}>
       {children}
     </AuthContext.Provider>
   );

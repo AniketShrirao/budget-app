@@ -124,9 +124,45 @@
       }
 
       td > span,
-      td > div {
+      td > div,
+      td > .MuiTextField-root,
+      td > .MuiSelect-root {
+        min-width: 135px;
         max-width: 100px;
       }
     }
   }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    
+    .MuiButton-root {
+      margin-top: 1rem;
+    }
+  }
 }
+
+@media (max-width: 768px) {
+  .lending-reminders-card .lending-table td > span, 
+  .lending-reminders-card .lending-table td > div, 
+  .lending-reminders-card .lending-table td .MuiTextField-root, 
+  .lending-reminders-card .lending-table td .MuiSelect-root {
+      text-align: right;
+      width: auto;
+      min-width: 150px;
+      flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .lending-reminders-card .lending-table td > span, 
+  .lending-reminders-card .lending-table td > div,
+  .lending-reminders-card .lending-table td .MuiTextField-root,
+  .lending-reminders-card .lending-table td .MuiSelect-root {
+      max-width: 100px;
+      min-width: 135px;
+  }
+}
+

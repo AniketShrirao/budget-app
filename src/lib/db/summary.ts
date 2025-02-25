@@ -11,7 +11,7 @@ interface SummaryData {
   transactions: any[];
 }
 
-const DEFAULT_CATEGORIES: Category[] = [
+export const DEFAULT_CATEGORIES: Category[] = [
   { name: 'Needs', percentage: 50 },
   { name: 'Wants', percentage: 25 },
   { name: 'Investment', percentage: 20 },
