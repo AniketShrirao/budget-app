@@ -1,15 +1,15 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+import 'dotenv/config';
+import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.VITE_GMAIL_USER,
-    pass: process.env.VITE_GMAIL_PASS,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   console.log('Received event:', event);
   console.log('Received context:', context);
 
@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
   const { email, borrower, amount, type } = parsedBody;
 
   const mailOptions = {
-    from: process.env.VITE_GMAIL_USER,
+    from: process.env.GMAIL_USER,
     to: email,
     subject: type === 'acknowledgment' ? 'Lending Reminder Added' : 'Lending Reminder',
     text: type === 'acknowledgment'

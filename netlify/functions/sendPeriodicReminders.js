@@ -1,16 +1,20 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+import 'dotenv/config';
+import nodemailer from 'nodemailer';
 import { supabase } from '../../src/lib/supabase';
+
+// dotenv.config() is not needed since we're using environment variables
+// that are configured directly in Netlify's environment settings
+
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.VITE_GMAIL_USER,
-    pass: process.env.VITE_GMAIL_PASS,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   const { data: lendings, error } = await supabase.from('lendings').select('*');
 
   if (error) {
@@ -38,8 +42,8 @@ exports.handler = async (event, context) => {
 
     if (now >= reminderDate) {
       const mailOptions = {
-        from: process.env.VITE_GMAIL_USER,
-        to: lending.user_email, // Assuming you have a user_email field in your lendings table
+        from: process.env.GMAIL_USER,
+        to: lending.user_email,
         subject: 'Lending Reminder',
         text: `Reminder to ask ${lending.borrower} for payback of ₹${lending.amount}`,
       };
