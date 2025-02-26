@@ -10,7 +10,6 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         manifest: {
           name: 'Budget Tracker',
           short_name: 'BudgetApp',
@@ -21,23 +20,25 @@ export default defineConfig(({ mode }) => {
           scope: '/',
           start_url: '/',
           orientation: 'portrait',
+          categories: ['finance', 'productivity'],
           icons: [
             {
               src: '/icons/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
-              purpose: 'any maskable'
+              purpose: 'any'
             },
             {
               src: '/icons/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
+              purpose: 'any'
             }
           ]
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          cleanupOutdatedCaches: true,
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/bhuwkdzcuyydqponxssf\.supabase\.co\/.*/i,
@@ -46,19 +47,27 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'supabase-cache',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 24 * 60 * 60 // 24 hours
+                  maxAgeSeconds: 24 * 60 * 60
                 }
               }
             }
           ]
+        },
+        devOptions: {
+          enabled: true
         }
       })
     ],
     server: {
       port: 3000,
+      host: '0.0.0.0',
       hmr: {
         overlay: false
       }
+    },
+    preview: {
+      port: 4173,
+      host: '0.0.0.0'
     },
     define: {
       'process.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),

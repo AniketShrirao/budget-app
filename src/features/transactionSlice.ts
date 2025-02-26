@@ -104,9 +104,13 @@ export const addTransaction = createAsyncThunk(
     try {
       await syncService.queueOperation('create', 'transactions', transaction);
       return transaction;
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
+      }
+      // Handle non-Error objects
+      if (error && typeof error === 'object' && 'message' in error) {
+        return rejectWithValue((error as { message: string }).message);
       }
       return rejectWithValue('An unknown error occurred');
     }
@@ -119,9 +123,13 @@ export const updateTransaction = createAsyncThunk(
     try {
       await syncService.queueOperation('update', 'transactions', transaction);
       return transaction;
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
+      }
+      // Handle non-Error objects
+      if (error && typeof error === 'object' && 'message' in error) {
+        return rejectWithValue((error as { message: string }).message);
       }
       return rejectWithValue('An unknown error occurred');
     }
@@ -134,9 +142,13 @@ export const deleteTransaction = createAsyncThunk(
     try {
       await syncService.queueOperation('delete', 'transactions', { id });
       return id;
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
+      }
+      // Handle non-Error objects
+      if (error && typeof error === 'object' && 'message' in error) {
+        return rejectWithValue((error as { message: string }).message);
       }
       return rejectWithValue('An unknown error occurred');
     }
