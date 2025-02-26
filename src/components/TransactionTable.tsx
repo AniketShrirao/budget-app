@@ -22,28 +22,19 @@ import {
 import { RootState, AppDispatch } from '../store';
 import TransactionOverlay from './TransactionOverlay'; // Import TransactionOverlay
 import { toast } from 'react-toastify'; // Add this import
+import { 
+  Transaction, 
+  TransactionTableProps, 
+  Column, 
+} from '../types';
 
 import './TransactionTable.scss';
 
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: string;
-  category: string;
-  status: string;
-  important: boolean;
-  recurrence: string;
-}
-
-interface TransactionTableProps {
-  filteredTransactions: Transaction[];
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-}
-
-const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransactions, page, setPage }) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({ 
+  filteredTransactions, 
+  page, 
+  setPage 
+}) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedTxn, setSelectedTxn] = React.useState<Transaction | null>(null);
   const theme = useTheme();
@@ -55,14 +46,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     (state: RootState) => state.transactions.transactions,
   );
   const loading = useSelector((state: RootState) => state.transactions.loading);
-
-  interface Column {
-    label: string;
-    field: string;
-    visible: boolean;
-    format?: (value: number) => string;
-    render?: (txn: Transaction) => JSX.Element;
-  }
 
   const columns: Column[] = [
     { label: 'Date', field: 'date', visible: true },
@@ -83,8 +66,12 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
       render: (txn: Transaction) => (
         <IconButton 
           onClick={(e) => {
-            e.stopPropagation(); // Stop event propagation
-            handleDelete(txn.id);
+            e.stopPropagation();
+            dispatch(removeTransactionFromDB(txn.id)).then(() => {
+              toast.success('Transaction deleted successfully');
+            }).catch(() => {
+              toast.error('Failed to delete transaction');
+            });
           }} 
           color="error"
         >
@@ -106,25 +93,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  interface HandleDelete {
-    (txnId: string): Promise<void>;
-  }
-
-  const handleDelete: HandleDelete = async (txnId) => {
-    try {
-      await dispatch(removeTransactionFromDB(txnId)).unwrap();
-      toast.success('Transaction deleted successfully!', {
-        style: { background: '#4caf50', color: 'white' }
-      });
-    } catch (error) {
-      toast.error('Failed to delete transaction', {
-        style: { background: '#d32f2f', color: 'white' }
-      });
-    }
-  };
-
-  const getRowColor = ({ important, recurrence }: { important: boolean; recurrence: string }) => {
+  
+  // Add RowColorProps type to types/index.ts and use it here
+  const getRowColor = ({ important, recurrence }: { important?: boolean; recurrence?: string }) => {
     if (important) return '#FFB6B6';
     if (recurrence === 'Quarterly') return '#B0C4DE';
     if (recurrence === 'Monthly') return '#98FB98';
@@ -132,11 +103,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     return 'transparent';
   };
 
-  interface HandleRowClick {
-    (txn: Transaction): void;
-  }
-
-  const handleRowClick: HandleRowClick = (txn) => {
+  const handleRowClick = (txn: Transaction) => {
     setSelectedTxn(txn);
   };
 

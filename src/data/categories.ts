@@ -1,30 +1,16 @@
-export const Categories = [
-  {
-    id: 1,
-    title: 'Food',
-  },
-  {
-    id: 2,
-    title: 'Transport',
-  },
-  {
-    id: 3,
-    title: 'Entertainment',
-  },
-  {
-    id: 4,
-    title: 'Clothing',
-  },
-  {
-    id: 5,
-    title: 'Housing',
-  },
-  {
-    id: 6,
-    title: 'Medical',
-  },
-  {
-    id: 7,
-    title: 'Other',
-  },
+interface CategoryData {
+  id: number;
+  title: string;
+  icon?: string;
+}
+
+export const Categories: CategoryData[] = [
+  { id: 1, title: 'Food', icon: '🍽️' },
+  { id: 2, title: 'Transport', icon: '🚗' },
+  { id: 3, title: 'Entertainment', icon: '🎮' },
+  { id: 4, title: 'Shopping', icon: '🛍️' },
+  { id: 5, title: 'Bills', icon: '📄' },
+  { id: 6, title: 'Salary', icon: '💰' },
+  { id: 7, title: 'Investment', icon: '📈' },
+  { id: 8, title: 'Other', icon: '📌' }
 ];

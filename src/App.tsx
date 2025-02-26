@@ -20,6 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { InstallPrompt } from './components/InstallPrompt';
+import CategoryManager from './components/CategoryManager';
 
 function AppContent() {
   const auth = useAuth();
@@ -58,7 +59,6 @@ function AppContent() {
   if (loading) {
     return <Loading message="Initializing app..." />;
   }
-
   return (
     <Layout>
       <Routes>
@@ -87,6 +87,10 @@ function AppContent() {
         <Route 
           path="/income" 
           element={user ? <Income /> : <Navigate to="/" replace />} 
+        />
+        <Route 
+          path="/categories" 
+          element={user ? <CategoryManager /> : <Navigate to="/" replace />} 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

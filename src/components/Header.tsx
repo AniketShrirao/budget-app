@@ -43,6 +43,7 @@ const Header = () => {
   const menuItems = [
     { path: '/transactions', label: 'Transactions' },
     { path: '/summary', label: 'Summary' },
+    { path: '/categories', label: 'Categories' },
     { path: '/income', label: 'Income' },
     { path: '/lending', label: 'Lending' },
   ];

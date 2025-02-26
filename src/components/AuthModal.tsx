@@ -11,10 +11,11 @@ import {
   Divider
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import { AuthModalProps } from '../types';
 import './AuthModal.scss';
 import { toast } from 'react-toastify';
 
-const AuthModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -119,4 +120,4 @@ const AuthModal = ({ open, onClose }: { open: boolean; onClose: () => void }) =>
   );
 };
 
-export default AuthModal; 
+export default AuthModal;

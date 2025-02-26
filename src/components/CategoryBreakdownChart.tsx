@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Card, CardContent, Typography } from '@mui/material';
 import NoDataAvailable from './NoDataAvailable';
-import { Transaction } from '../features/transactionSlice';
+import { CategoryBreakdownChartProps, CategoryChartData, Transaction } from '../types';
 
 const COLORS = [
   '#0088FE',
@@ -22,16 +22,6 @@ const COLORS = [
   '#FF4560',
   '#00E396',
 ];
-
-interface CategoryBreakdownChartProps {
-  selectedMonth: string;
-}
-
-interface ChartData {
-  name: string;
-  value: number;
-  active: boolean;
-}
 
 const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   selectedMonth,
@@ -70,8 +60,8 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   };
 
   // First calculate base chart data
-  const baseChartData: ChartData[] = transactionCategories
-    .map((category): ChartData => {
+  const baseChartData: CategoryChartData[] = transactionCategories
+    .map((category): CategoryChartData => {
       const spent = currentMonthTransactions
         .filter((tx) => tx.category === category)
         .reduce((total, tx) => total + tx.amount, 0);
@@ -84,8 +74,8 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
     });
 
   // Then filter and sort
-  const filteredChartData: ChartData[] = baseChartData
-    .sort((a: ChartData, b: ChartData) => b.value - a.value);
+  const filteredChartData: CategoryChartData[] = baseChartData
+    .sort((a: CategoryChartData, b: CategoryChartData) => b.value - a.value);
 
   const hasSpentValues = filteredChartData.some((data) => data.value > 0);
 

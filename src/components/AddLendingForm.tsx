@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import './AddLendingForm.scss';
 import { useAuth } from '../context/AuthContext';
 import Loading from '../components/Loading';
+import { LendingFormData, ReminderFrequency } from '../types';
 
 interface AddLendingFormProps {
   onAddLending: () => void;
@@ -29,7 +30,7 @@ const AddLendingForm: React.FC<AddLendingFormProps> = ({ onAddLending }) => {
   const dispatch: AppDispatch = useDispatch();
   const auth = useAuth();
   const user = auth?.user;
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LendingFormData>({
     borrower: '',
     amount: '',
     date: '',
@@ -258,7 +259,7 @@ const AddLendingForm: React.FC<AddLendingFormProps> = ({ onAddLending }) => {
             <InputLabel>Reminder Frequency</InputLabel>
             <Select
               value={formData.reminderfrequency}
-              onChange={(e) => setFormData({ ...formData, reminderfrequency: e.target.value as string })}
+              onChange={(e) => setFormData({ ...formData, reminderfrequency: e.target.value as ReminderFrequency })}
               label="Reminder Frequency"
             >
               <MenuItem value="daily">Daily</MenuItem>

@@ -1,19 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { supabase } from '../lib/supabase'; // Ensure supabase is imported properly
 import { syncService } from '../services/syncService';
+import { Transaction } from '../types';
 
-
-export interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: string;
-  category: string;
-  status: string;
-  important: boolean;
-  recurrence: string;
-}
 
 interface TransactionState {
   transactions: Transaction[];

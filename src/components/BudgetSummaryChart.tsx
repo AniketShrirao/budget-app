@@ -11,18 +11,15 @@ import {
 } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { BudgetSummaryChartProps, ChartData } from '../types';
 import NoDataAvailable from './NoDataAvailable';
 import { Card, CardContent, Typography } from '@mui/material';
 import { DEFAULT_CATEGORIES } from '../lib/db/summary';
 
 const COLORS = {
-  Allocated: '#4CAF50', // Green for Allocated
-  Spent: '#F44336', // Red for Spent
-};
-
-interface BudgetSummaryChartProps {
-  selectedMonth: string;
-}
+  Allocated: '#4CAF50',
+  Spent: '#F44336',
+} as const;
 
 const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }) => {
   const transactions = useSelector(
@@ -55,12 +52,6 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
   // Use default values if summary data is empty
   const budget = summaryData[selectedMonth]?.budget ?? 100;
   const categoryPercentages = summaryData[selectedMonth]?.categories ?? DEFAULT_CATEGORIES;
-
-  interface ChartData {
-    type: string;
-    Allocated: number;
-    Spent: number;
-  }
 
   const chartData: ChartData[] = categories.map((type) => {
     const spent = currentMonthTransactions

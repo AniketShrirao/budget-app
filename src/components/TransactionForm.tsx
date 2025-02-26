@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../store';
+import { FormData, Transaction } from '../types';
 import {
   addTransactionToDB,
   fetchTransactions,
@@ -12,19 +13,24 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import './TransactionForm.scss';
 import { Categories } from '../data/categories';
 import { Types } from '../data/types';
 import { categoryTypeMapping } from '../data/categoryTypeMapping';
-import type { Transaction } from '../features/transactionSlice';
 import { toast } from 'react-toastify';
 
+interface FormChangeEvent {
+  target: {
+    name?: string;
+    value: unknown;
+  };
+}
+
 const TransactionForm = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const [form, setForm] = useState({
-    date: '',
+  const dispatch = useDispatch<AppDispatch>();
+  const [form, setForm] = useState<FormData>({
+    date: moment().format('YYYY-MM-DD'),
     category: 'Other',
     description: '',
     amount: '',
@@ -33,46 +39,46 @@ const TransactionForm = () => {
     recurrence: 'None',
   });
 
-  useEffect(() => {
-    const today = moment().format('YYYY-MM-DD');
-    setForm((prevForm) => ({ ...prevForm, date: today }));
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | FormChangeEvent
+  ) => {
     const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-      ...(name === 'category' && {
-        type: categoryTypeMapping[value as keyof typeof categoryTypeMapping] || 'Needs',
-      }),
-    }));
+    if (name) {
+      setForm((prevForm) => {
+        const updatedForm: FormData = {
+          ...prevForm,
+          [name]: value,
+        };
+
+        if (name === 'category') {
+          const mappedType = categoryTypeMapping[value as string];
+          updatedForm.type = mappedType || 'Needs';
+        }
+
+        return updatedForm;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (Number(form.amount) <= 0) {
-      toast.error('Amount must be greater than 0', {
-        style: { background: '#d32f2f', color: 'white' }
-      });
+    const amount = Number(form.amount);
+    if (amount <= 0) {
+      toast.error('Amount must be greater than 0');
       return;
     }
 
-    const transaction: Transaction = {
-      id: uuidv4(),
+    const transaction: Omit<Transaction, 'id' | 'user_id'> = {
       ...form,
-      amount: Number(form.amount),
+      amount,
       status: 'pending',
     };
 
     try {
-      await dispatch(addTransactionToDB(transaction)).unwrap();
+      await dispatch(addTransactionToDB({ ...transaction, user_id: '' })).unwrap();
       await dispatch(fetchTransactions()).unwrap();
-      
-      toast.success('Transaction added successfully!', {
-        style: { background: '#4caf50', color: 'white' }
-      });
+      toast.success('Transaction added successfully!');
 
       setForm({
         date: moment().format('YYYY-MM-DD'),
@@ -84,9 +90,7 @@ const TransactionForm = () => {
         recurrence: 'None',
       });
     } catch (error) {
-      toast.error('Failed to add transaction. Please try again.', {
-        style: { background: '#d32f2f', color: 'white' }
-      });
+      toast.error('Failed to add transaction. Please try again.');
     }
   };
 

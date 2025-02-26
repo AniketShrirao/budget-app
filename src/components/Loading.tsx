@@ -1,16 +1,20 @@
 import React from 'react';
-import { CircularProgress, Box, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import './Loading.scss';
 
 interface LoadingProps {
   message?: string;
+  size?: number;
 }
 
-const Loading: React.FC<LoadingProps> = ({ message = 'Loading...' }) => {
+const Loading: React.FC<LoadingProps> = ({ 
+  message = 'Loading...', 
+  size = 40 
+}) => {
   return (
     <Box className="loading-container">
-      <CircularProgress size={40} />
-      <Typography variant="h6" className="loading-text">
+      <CircularProgress size={size} />
+      <Typography variant="body1" className="loading-message">
         {message}
       </Typography>
     </Box>

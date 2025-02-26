@@ -1,6 +1,8 @@
-export const Types = {
+import { TransactionType } from '../types';
+
+export const Types: Record<TransactionType, TransactionType> = {
   Needs: 'Needs',
   Wants: 'Wants',
-  Investment: 'Investment',
-  Marraige: 'Marraige',
+  Savings: 'Savings',
+  Income: 'Income'
 };

@@ -8,8 +8,7 @@ import { RootState, AppDispatch } from '../store';
 import './MonthsTabs.scss';
 
 const MonthsTabs = () => {
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Start from 1
-
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [page, setPage] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -22,7 +21,7 @@ const MonthsTabs = () => {
   }, [selectedMonth, dispatch]);
 
   const filteredTransactions = transactions.filter(
-    (txn) => new Date(txn.date).getMonth() + 1 === selectedMonth, // Convert getMonth() to 1-based
+    (txn) => new Date(txn.date).getMonth() + 1 === selectedMonth,
   );
 
   return (

@@ -7,17 +7,15 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { Transaction } from '../features/transactionSlice'; // Assuming you have a type for transactions
+import { Transaction } from '../types';
 
+// Move this interface to types/index.ts
 interface TransactionOverlayProps {
   txn: Transaction | null;
   setSelectedTxn: (txn: Transaction | null) => void;
 }
 
-const TransactionOverlay = ({
-  txn,
-  setSelectedTxn,
-}: TransactionOverlayProps) => {
+const TransactionOverlay = ({ txn, setSelectedTxn }: TransactionOverlayProps) => {
   const handleClose = () => {
     setSelectedTxn(null); // Close overlay
   };

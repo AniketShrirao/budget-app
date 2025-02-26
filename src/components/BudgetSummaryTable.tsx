@@ -17,23 +17,12 @@ import {
   fetchMonthlySummary,
 } from '../features/summarySlice';
 import { store } from '../store';
-import { Transaction } from '../features/transactionSlice';
+import { BudgetSummaryTableProps, Transaction } from '../types';
 import Loading from './Loading';
 import { toast } from 'react-toastify';
 
-const DEFAULT_CATEGORIES = [
-  { name: 'Needs', percentage: 20 },
-  { name: 'Wants', percentage: 20 },
-  { name: 'Investment', percentage: 30 },
-  { name: 'Marriage', percentage: 30 },
-];
-
-interface BudgetSummaryTableProps {
-  className?: string;
-  userId: string;
-  selectedMonth: string;
-  parentTransactions: any[];
-}
+// Move DEFAULT_CATEGORIES to a constants file
+import { DEFAULT_CATEGORIES } from '../constants/budgetDefaults';
 
 const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   className,
@@ -42,11 +31,11 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   parentTransactions,
 }) => {
   const dispatch = useDispatch<typeof store.dispatch>();
-  const { data, error, loading } = useSelector((state: { summary: any }) => state.summary);
+  const { data, error, loading } = useSelector((state: any) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempCategories, setTempCategories] = useState<{ name: string; percentage: number }[]>([]);
-  const [currentMonthTransactions, setCurrentMonthTransactions] = useState<any[]>([]);
-  const [modifiedCategories, setModifiedCategories] = useState<{ [key: string]: boolean }>({});
+  const [tempCategories, setTempCategories] = useState<Category[]>([]);
+  const [currentMonthTransactions, setCurrentMonthTransactions] = useState<Transaction[]>([]);
+  const [modifiedCategories, setModifiedCategories] = useState<Record<string, boolean>>({});
   const [totalError, setTotalError] = useState('');
   const [localBudget, setLocalBudget] = useState<string>('');
 
@@ -56,9 +45,9 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
 
   useEffect(() => {
     if (data[selectedMonth]?.categories?.length) {
-      setTempCategories(data[selectedMonth]?.categories);
+      setTempCategories([...data[selectedMonth].categories]);
     } else {
-      setTempCategories(DEFAULT_CATEGORIES);
+      setTempCategories([...DEFAULT_CATEGORIES]);
     }
   }, [data, selectedMonth]);
 
@@ -129,9 +118,12 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   }
 
   const handlePercentageChange = (name: string, value: string) => {
-    setTempCategories((prevCategories: Category[]) =>
-      prevCategories.map((category: Category) =>
-        category.name === name ? { ...category, percentage: parseInt(value, 10) || 0 } : category,
+    const newValue = parseInt(value, 10);
+    if (isNaN(newValue)) return;
+
+    setTempCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category.name === name ? { ...category, percentage: newValue } : category,
       ),
     );
   };

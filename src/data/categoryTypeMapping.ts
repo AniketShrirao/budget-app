@@ -1,9 +1,12 @@
-export const categoryTypeMapping = {
+import { TransactionType } from '../types';
+
+export const categoryTypeMapping: Record<string, TransactionType> = {
   Food: 'Needs',
   Transport: 'Needs',
   Entertainment: 'Wants',
-  Clothing: 'Wants',
-  Housing: 'Needs',
-  Medical: 'Needs',
-  Other: 'Needs',
+  Shopping: 'Wants',
+  Bills: 'Needs',
+  Salary: 'Income',
+  Investment: 'Savings',
+  Other: 'Needs'
 };

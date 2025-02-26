@@ -1,16 +1,30 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { SentimentDissatisfied } from '@mui/icons-material';
+import { NoDataAvailableProps } from '../types';
 
-const NoDataAvailable: React.FC = () => {
+const NoDataAvailable: React.FC<NoDataAvailableProps> = ({
+  message = 'No data available',
+  icon = <SentimentDissatisfied sx={{ fontSize: 48 }} />,
+  className
+}) => {
   return (
-    <Typography
-      variant="h6"
-      align="center"
-      color="textSecondary"
-      style={{ marginTop: '20px' }}
+    <Box
+      className={`no-data-container ${className || ''}`}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 4,
+        color: 'text.secondary'
+      }}
     >
-      No data available
-    </Typography>
+      {icon}
+      <Typography variant="h6" mt={2}>
+        {message}
+      </Typography>
+    </Box>
   );
 };
 

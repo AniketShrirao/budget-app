@@ -2,7 +2,24 @@ import React, { useEffect, useCallback, forwardRef, useImperativeHandle, useStat
 import { AppDispatch, RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLendings, deleteLending, updateLending } from '../features/lendingSlice';
-import { Card, CardContent, Typography, Table, TableBody, TableCell, TableHead, TableRow, Alert, Grid, IconButton, TextField, Select, MenuItem, SelectChangeEvent, Box } from '@mui/material';
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableRow, 
+  Alert, 
+  IconButton, 
+  TextField, 
+  Select, 
+  MenuItem, 
+  Box, 
+  SelectChangeEvent,
+  Grid
+} from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import './LendingReminder.scss';
 import { useAuth } from '../context/AuthContext';
@@ -16,9 +33,14 @@ interface Lending {
   date: string;
   period: string;
   reminderfrequency: string;
+  user_email?: string;
 }
 
-const LendingReminders = forwardRef((_, ref) => {
+export interface LendingRemindersRef {
+  refresh: () => void;
+}
+
+const LendingReminders = forwardRef<LendingRemindersRef>((_, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const { lendings, loading, error } = useSelector((state: RootState) => state.lendings);
   const auth = useAuth();
@@ -216,6 +238,11 @@ const LendingReminders = forwardRef((_, ref) => {
   }, [lendings, userEmail]);
 
   useImperativeHandle(ref, () => ({
+    refresh: () => {
+      if (userEmail) {
+        dispatch(fetchLendings(userEmail));
+      }
+    },
     checkReminders,
   }));
 
