@@ -19,16 +19,7 @@ import Layout from './components/Layout';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
-
-// function DebugRouteLogger() {
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     console.log('Current Path:', location.pathname);
-//   }, [location]);
-
-//   return null; // This component just logs route changes
-// }
+import { InstallPrompt } from './components/InstallPrompt';
 
 function AppContent() {
   const auth = useAuth();
@@ -108,6 +99,7 @@ export default function App() {
     <Router>
       <AuthProvider>
         <AppContent />
+        <InstallPrompt />
         <ToastContainer
           position="bottom-center"
           autoClose={500}

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { supabase } from '../lib/supabase'; // Ensure supabase is imported properly
+import { syncService } from '../services/syncService';
 
 
 export interface Transaction {
@@ -95,6 +96,51 @@ export const removeTransactionFromDB = createAsyncThunk(
       throw error;
     }
   },
+);
+
+export const addTransaction = createAsyncThunk(
+  'transactions/add',
+  async (transaction: Omit<Transaction, 'id'>, { rejectWithValue }) => {
+    try {
+      await syncService.queueOperation('create', 'transactions', transaction);
+      return transaction;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
+    }
+  }
+);
+
+export const updateTransaction = createAsyncThunk(
+  'transactions/update',
+  async (transaction: Transaction, { rejectWithValue }) => {
+    try {
+      await syncService.queueOperation('update', 'transactions', transaction);
+      return transaction;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
+    }
+  }
+);
+
+export const deleteTransaction = createAsyncThunk(
+  'transactions/delete',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await syncService.queueOperation('delete', 'transactions', { id });
+      return id;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
+    }
+  }
 );
 
 const transactionSlice = createSlice({
