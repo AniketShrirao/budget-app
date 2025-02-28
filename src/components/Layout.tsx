@@ -1,9 +1,6 @@
-import { ReactNode } from 'react';
-import Header from './Header';
+import { LayoutProps } from '../types/common';
 
-interface LayoutProps {
-  children: ReactNode;
-}
+import Header from './Header';
 
 const Layout = ({ children }: LayoutProps) => {
   return (
@@ -16,4 +13,4 @@ const Layout = ({ children }: LayoutProps) => {
   );
 };
 
-export default Layout; 
+export default Layout;

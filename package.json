@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "test": "echo \"Running tests...\"",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "manage-types": "node scripts/manage-types.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

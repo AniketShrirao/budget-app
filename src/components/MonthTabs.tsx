@@ -1,11 +1,7 @@
-import React from 'react';
-import { Tabs, Tab, Box } from '@mui/material';
+import { TabsProps } from '../types/common';
+import { Box, Tab, Tabs } from '@mui/material';
 
-interface TabsProps {
-  className?: string;
-  selectedMonth: string; // 1-based
-  onMonthChange: (newMonth: string) => void;
-}
+import React from 'react';
 
 const MonthTabs: React.FC<TabsProps> = ({
   className,

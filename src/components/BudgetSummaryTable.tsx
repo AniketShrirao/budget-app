@@ -1,25 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  TextField,
-  IconButton,
-  Box,
-  Typography,
-  Button,
-  Alert,
-  InputAdornment,
-} from '@mui/material';
+import { BudgetSummaryTableProps } from '../types/common';
+import { Category } from '../types/category';
+import { Alert, Box, Button, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Pencil } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  updateMonthlySummary,
-  fetchMonthlySummary,
-} from '../features/summarySlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMonthlySummary, updateMonthlySummary } from '../features/summarySlice';
 import { store } from '../store';
-import { Transaction } from '../features/transactionSlice';
-import Loading from './Loading';
+import { Transaction } from '../types/transaction';
 import { toast } from 'react-toastify';
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+import Loading from './Loading';
 
 const DEFAULT_CATEGORIES = [
   { name: 'Needs', percentage: 20 },
@@ -27,13 +18,6 @@ const DEFAULT_CATEGORIES = [
   { name: 'Investment', percentage: 30 },
   { name: 'Marriage', percentage: 30 },
 ];
-
-interface BudgetSummaryTableProps {
-  className?: string;
-  userId: string;
-  selectedMonth: string;
-  parentTransactions: any[];
-}
 
 const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   className,
@@ -122,11 +106,6 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       }}
     />
   ), [localBudget, handleBudgetChange, handleBudgetBlur]);
-
-  interface Category {
-    name: string;
-    percentage: number;
-  }
 
   const handlePercentageChange = (name: string, value: string) => {
     setTempCategories((prevCategories: Category[]) =>

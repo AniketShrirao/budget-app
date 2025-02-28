@@ -1,28 +1,18 @@
-import React from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  CartesianGrid,
-} from 'recharts';
+import { BudgetSummaryChartProps } from '../types/common';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import NoDataAvailable from './NoDataAvailable';
 import { Card, CardContent, Typography } from '@mui/material';
 import { DEFAULT_CATEGORIES } from '../lib/db/summary';
+
+import React from 'react';
+
+import NoDataAvailable from './NoDataAvailable';
 
 const COLORS = {
   Allocated: '#4CAF50', // Green for Allocated
   Spent: '#F44336', // Red for Spent
 };
-
-interface BudgetSummaryChartProps {
-  selectedMonth: string;
-}
 
 const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }) => {
   const transactions = useSelector(
@@ -56,13 +46,7 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
   const budget = summaryData[selectedMonth]?.budget ?? 100;
   const categoryPercentages = summaryData[selectedMonth]?.categories ?? DEFAULT_CATEGORIES;
 
-  interface ChartData {
-    type: string;
-    Allocated: number;
-    Spent: number;
-  }
-
-  const chartData: ChartData[] = categories.map((type) => {
+  const chartData = categories.map((type) => {
     const spent = currentMonthTransactions
       .filter((tx) => tx.type === type)
       .reduce((total, tx) => total + tx.amount, 0);

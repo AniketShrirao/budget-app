@@ -1,22 +1,17 @@
-import React, { useEffect, useCallback, forwardRef, useImperativeHandle, useState } from 'react';
+import { Lending } from '../types/common';
 import { AppDispatch, RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchLendings, deleteLending, updateLending } from '../features/lendingSlice';
-import { Card, CardContent, Typography, Table, TableBody, TableCell, TableHead, TableRow, Alert, Grid, IconButton, TextField, Select, MenuItem, SelectChangeEvent, Box } from '@mui/material';
-import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
-import './LendingReminder.scss';
+import { deleteLending, fetchLendings, updateLending } from '../features/lendingSlice';
+import { Alert, Box, Card, CardContent, Grid, IconButton, MenuItem, Select, SelectChangeEvent, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Cancel, Delete, Edit, Save } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-import Loading from './Loading';
 import { toast } from 'react-toastify';
 
-interface Lending {
-  id: string;
-  borrower: string;
-  amount: number;
-  date: string;
-  period: string;
-  reminderfrequency: string;
-}
+import React, { useEffect, useCallback, forwardRef, useImperativeHandle, useState } from 'react';
+
+import './LendingReminder.scss';
+
+import Loading from './Loading';
 
 const LendingReminders = forwardRef((_, ref) => {
   const dispatch = useDispatch<AppDispatch>();

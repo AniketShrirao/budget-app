@@ -1,24 +1,7 @@
+import { Lending } from '../types/common';
+import { Transaction } from '../types/transaction';
+
 import Dexie, { Table } from 'dexie';
-
-interface Transaction {
-  id: string;
-  amount: number;
-  category: string;
-  date: string;
-  description: string;
-  type: 'expense' | 'income';
-  user_email: string;
-}
-
-interface Lending {
-  id: string;
-  borrower: string;
-  amount: number;
-  date: string;
-  period: string;
-  reminderfrequency: string;
-  user_email: string;
-}
 
 export class BudgetDB extends Dexie {
   transactions!: Table<Transaction>;

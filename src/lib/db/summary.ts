@@ -1,15 +1,6 @@
+import { SummaryData } from '../../types/common';
+import { Category } from '../../types/category';
 import { supabase } from '../supabase';
-
-interface Category {
-  name: string;
-  percentage: number;
-}
-
-interface SummaryData {
-  budget: number;
-  categories: Category[];
-  transactions: any[];
-}
 
 export const DEFAULT_CATEGORIES: Category[] = [
   { name: 'Needs', percentage: 50 },

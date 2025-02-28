@@ -1,18 +1,7 @@
+import { TransactionOverlayProps } from '../types/transaction';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Typography,
-} from '@mui/material';
-import { Transaction } from '../features/transactionSlice'; // Assuming you have a type for transactions
-
-interface TransactionOverlayProps {
-  txn: Transaction | null;
-  setSelectedTxn: (txn: Transaction | null) => void;
-}
+// Assuming you have a type for transactions
 
 const TransactionOverlay = ({
   txn,

@@ -1,18 +1,10 @@
+import { AuthContextType } from '../types/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { useDispatch } from 'react-redux';
 import { fetchTransactions } from '../features/transactionSlice';
 import { AppDispatch } from '../store';
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
-}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

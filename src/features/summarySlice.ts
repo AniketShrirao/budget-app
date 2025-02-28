@@ -1,12 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { SummaryState } from '../types/common';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchSummary, updateSummary } from '../lib/db/summary';
 import { RootState } from '../store';
-
-interface SummaryState {
-  data: Record<string, any>; // Stores summary data per month
-  loading: boolean;
-  error: string | null;
-}
 
 const initialState: SummaryState = {
   data: {},

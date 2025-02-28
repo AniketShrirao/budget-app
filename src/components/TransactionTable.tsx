@@ -1,47 +1,19 @@
-import React, { useEffect } from 'react';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  TableContainer,
-  Paper,
-  Typography,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Column, HandleDelete, HandleRowClick } from '../types/common';
+import { Transaction, TransactionTableProps } from '../types/transaction';
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchTransactions,
-  removeTransactionFromDB,
-} from '../features/transactionSlice';
-import { RootState, AppDispatch } from '../store';
+import { fetchTransactions, removeTransactionFromDB } from '../features/transactionSlice';
+import { AppDispatch, RootState } from '../store';
+import { toast } from 'react-toastify';
+
+import React, { useEffect } from 'react';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import TransactionOverlay from './TransactionOverlay'; // Import TransactionOverlay
-import { toast } from 'react-toastify'; // Add this import
+ // Add this import
 
 import './TransactionTable.scss';
-
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: string;
-  category: string;
-  status: string;
-  important: boolean;
-  recurrence: string;
-}
-
-interface TransactionTableProps {
-  filteredTransactions: Transaction[];
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-}
 
 const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransactions, page, setPage }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -55,14 +27,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     (state: RootState) => state.transactions.transactions,
   );
   const loading = useSelector((state: RootState) => state.transactions.loading);
-
-  interface Column {
-    label: string;
-    field: string;
-    visible: boolean;
-    format?: (value: number) => string;
-    render?: (txn: Transaction) => JSX.Element;
-  }
 
   const columns: Column[] = [
     { label: 'Date', field: 'date', visible: true },
@@ -107,10 +71,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     setPage(0);
   };
 
-  interface HandleDelete {
-    (txnId: string): Promise<void>;
-  }
-
   const handleDelete: HandleDelete = async (txnId) => {
     try {
       await dispatch(removeTransactionFromDB(txnId)).unwrap();
@@ -131,10 +91,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
     if (recurrence === 'Yearly') return '#FFD700';
     return 'transparent';
   };
-
-  interface HandleRowClick {
-    (txn: Transaction): void;
-  }
 
   const handleRowClick: HandleRowClick = (txn) => {
     setSelectedTxn(txn);
