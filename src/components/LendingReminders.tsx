@@ -141,7 +141,7 @@ const LendingReminders = forwardRef((_, ref) => {
       originalLending.reminderfrequency !== editData.reminderfrequency
     );
 
-    dispatch(updateLending({ lending: updatedLending, userEmail }))
+    dispatch(updateLending({ lending: { ...updatedLending, user_email: userEmail }, userEmail }))
       .unwrap()
       .then(async () => {
         if (hasReminderChanges) {
