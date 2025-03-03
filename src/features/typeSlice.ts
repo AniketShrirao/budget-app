@@ -1,45 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { typesDB } from '../lib/db/types';
-import {  TypeState } from '../types/type';
+import { TypeState } from '../types/type';
 import { CacheManager } from '../utils/cache';
-import { RootState } from '../store';
 import { TYPES_CACHE_KEY } from '../constants';
+import { RootState } from '../store';
+// Remove this import as we can't use hooks in thunks
+// import { useAuth } from '../context/AuthContext';
 
 export const fetchTypes = createAsyncThunk(
   'types/fetchTypes',
-  async (_, { getState }) => {
+  async (userId: string, { getState }) => {
     const state = getState() as RootState;
     const cache = CacheManager.getInstance();
     
-    // Check cache first
-    const cachedTypes = cache.get(TYPES_CACHE_KEY);
-    if (cachedTypes) {
-      return cachedTypes;
-    }
-
-    // Only fetch if not already loading or loaded
-    if (state.types.status === 'loading' || state.types.status === 'succeeded') {
+    if (state.types.status === 'succeeded' && state.types.types.length > 0) {
       return state.types.types;
     }
 
-    const types = await typesDB.fetchAll();
+    const types = await typesDB.fetchAll(userId);
     cache.set(TYPES_CACHE_KEY, types);
     return types;
-  },
-  {
-    condition: (_, { getState }) => {
-      const state = getState() as RootState;
-      // Prevent multiple in-flight requests
-      return state.types.status !== 'loading';
-    }
   }
 );
 
 export const addType = createAsyncThunk(
   'types/addType',
-  async (name: string, { rejectWithValue }) => {
+  async ({ name, userId }: { name: string; userId: string }, { rejectWithValue }) => {
     try {
-      return await typesDB.add({ name });
+      return await typesDB.add({ name, user_id: userId });
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -48,9 +36,17 @@ export const addType = createAsyncThunk(
 
 export const updateType = createAsyncThunk(
   'types/updateType',
-  async ({ id, updates }: { id: string; updates: Partial<TypeState['types'][0]> }, { rejectWithValue }) => {
+  async ({ 
+    id, 
+    updates, 
+    userId 
+  }: { 
+    id: string; 
+    updates: { name: string }; 
+    userId: string 
+  }, { rejectWithValue }) => {
     try {
-      return await typesDB.update(id, updates);
+      return await typesDB.update(id, updates, userId);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -59,9 +55,9 @@ export const updateType = createAsyncThunk(
 
 export const deleteType = createAsyncThunk(
   'types/deleteType',
-  async (id: string, { rejectWithValue }) => {
+  async ({ id, userId }: { id: string; userId: string }, { rejectWithValue }) => {
     try {
-      return await typesDB.delete(id);
+      return await typesDB.delete(id, userId);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -100,7 +96,7 @@ const index = state.types.findIndex(type => type.id === action.meta.arg.id);
         }
       })
       .addCase(deleteType.fulfilled, (state, action) => {
-        state.types = state.types.filter(type => type.id !== action.meta.arg);
+        state.types = state.types.filter(type => type.id !== action.meta.arg.id);
       });
   }
 });

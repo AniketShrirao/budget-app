@@ -1,10 +1,17 @@
-import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
-import { ExpirationPlugin } from 'workbox-expiration';
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
+
+const { precacheAndRoute } = workbox.precaching;
+const { registerRoute } = workbox.routing;
+const { NetworkFirst, CacheFirst, StaleWhileRevalidate } = workbox.strategies;
+const { ExpirationPlugin } = workbox.expiration;
+const { clientsClaim } = workbox.core;
+
+// Skip waiting and claim clients
+self.skipWaiting();
+clientsClaim();
 
 // Precache static resources
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 // Cache Supabase API requests
 registerRoute(
@@ -27,7 +34,13 @@ registerRoute(
     request.destination === 'script' ||
     request.destination === 'image',
   new CacheFirst({
-    cacheName: 'static-assets'
+    cacheName: 'static-assets',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
+      })
+    ]
   })
 );
 
@@ -43,6 +56,7 @@ self.addEventListener('install', (event) => {
     caches.open('offline').then(cache => cache.put('/offline.html', offlinePage))
   );
 });
+
 // Handle push notifications
 self.addEventListener('push', (event) => {
   const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -63,6 +77,7 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification('Budget Tracker', options)
   );
 });
+
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
@@ -70,6 +85,7 @@ self.addEventListener('notificationclick', (event) => {
     clients.openWindow('/')
   );
 });
+
 // Background sync
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-transactions') {

@@ -106,9 +106,11 @@ export interface SummaryData {
 }
 
 export interface SummaryState {
-  data: Record<string, SummaryData>;
-  loading: boolean;
+  data: { [key: string]: SummaryData };
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  loading: boolean;
+  currentMonth: string;
 }
 
 export interface SyncQueue {

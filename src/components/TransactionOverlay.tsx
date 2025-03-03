@@ -1,5 +1,6 @@
 import { TransactionOverlayProps } from '../types/transaction';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 // Assuming you have a type for transactions
 
@@ -11,10 +12,19 @@ const TransactionOverlay = ({
     setSelectedTxn(null); // Close overlay
   };
 
+  const theme = useTheme();
+
   if (!txn) return null;
 
   return (
-    <Dialog open={!!txn} onClose={handleClose}>
+    <Dialog
+    PaperProps={{
+      style: {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary
+      }
+    }}
+    open={!!txn} onClose={handleClose}>
       <DialogTitle>Status Information</DialogTitle>
       <DialogContent>
         <Typography variant="body1">

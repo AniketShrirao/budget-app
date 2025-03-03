@@ -21,9 +21,11 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
-import { addType, updateType, deleteType } from '../../features/typeSlice';
+import { addType, updateType, deleteType, fetchTypes } from '../../features/typeSlice';
 import { addTypeToAllSummaries, updateAllSummariesType } from '../../features/summarySlice';
-
+import { useAuth } from '../../context/AuthContext';
+// Add this after imports
+const DEFAULT_TYPES = ['Needs', 'Wants', 'Investment'];
 
 const Types = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +36,8 @@ const Types = () => {
   const [formData, setFormData] = useState('');
   const [formError, setFormError] = useState('');
   const [showAlert, setShowAlert] = useState({ show: false, message: '', type: 'success' });
+  const auth = useAuth();
+  const userId = auth?.user?.id;
 
   const validateForm = () => {
     if (!formData.trim()) {
@@ -55,21 +59,26 @@ const Types = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
   
-    try {
+    try { // or however you get your user
+      if (!userId) {
+        throw new Error('User not authenticated');
+      }
+  
       if (editItem) {
         await dispatch(updateType({
           id: editItem.id,  // Now using UUID
-          updates: { name: formData.trim() }
+          updates: { name: formData.trim() },
+          userId: userId
         })).unwrap();
         
-        await dispatch(updateAllSummariesType({ 
+        await dispatch(updateAllSummariesType({ // Add userId here
           oldName: editItem.name, 
           newName: formData.trim() 
         }));
   
         setShowAlert({ show: true, message: 'Type updated successfully!', type: 'success' });
       } else {
-        const newType = await dispatch(addType(formData.trim())).unwrap();
+        const newType = await dispatch(addType({ name: formData.trim(), userId: userId! })).unwrap();
         await dispatch(addTypeToAllSummaries(newType.name));
         setShowAlert({ show: true, message: 'Type added successfully!', type: 'success' });
       }
@@ -86,9 +95,11 @@ const Types = () => {
   };
   // Update handleDelete
   const handleDelete = async (type: { id: string; name: string }) => {
+    if (!userId) return;
+    
     if (window.confirm('Are you sure you want to delete this type?')) {
       try {
-        await dispatch(deleteType(type.id)).unwrap();
+        await dispatch(deleteType({ id: type.id, userId })).unwrap();
         await dispatch(updateAllSummariesType({ 
           oldName: type.name, 
           newName: '' 
@@ -123,6 +134,14 @@ const Types = () => {
     }
     setOpen(true);
   };
+  // Add effect to fetch types on component mount
+  useEffect(() => {
+    if (status === 'idle') {
+      if (userId) {
+        dispatch(fetchTypes(userId));
+      }
+    }
+  }, [dispatch, status]);
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
@@ -144,6 +163,8 @@ const Types = () => {
           </Box>
         ) : status === 'failed' ? (
           <Alert severity="error">Failed to load transaction types</Alert>
+        ) : types.length === 0 ? (
+          <Alert severity="info">No transaction types available. Add one to get started.</Alert>
         ) : (
           <List>
             {types.map((type) => (
@@ -151,20 +172,31 @@ const Types = () => {
                 key={type.id}
                 sx={{
                   mb: 1,
-                  backgroundColor: 'background.paper'
+                  backgroundColor: 'background.paper',
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'divider'
                 }}
               >
-                <ListItemText primary={type.name} />
+                <ListItemText 
+                  primary={type.name}
+                  primaryTypographyProps={{
+                    fontWeight: 500
+                  }}
+                />
                 <ListItemSecondaryAction>
                   <IconButton 
                     onClick={() => handleOpen(type)}
                     disabled={status !== 'succeeded'}
+                    size="small"
                   >
                     <EditIcon />
                   </IconButton>
                   <IconButton 
                     onClick={() => handleDelete({ id: type.id, name: type.name })}
                     disabled={status !== 'succeeded'}
+                    size="small"
+                    color="error"
                   >
                     <DeleteIcon />
                   </IconButton>

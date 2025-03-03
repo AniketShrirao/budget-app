@@ -22,7 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { InstallPrompt } from './components/InstallPrompt';
 
-function AppContent() {
+const AppContent = () => {
   const auth = useAuth();
   const user = auth?.user;
   const loading = auth?.loading;
@@ -30,6 +30,30 @@ function AppContent() {
   const location = useLocation();
   const loginToastShown = React.useRef(false);
   const isInitialMount = React.useRef(true);
+  const [appReady, setAppReady] = React.useState(false);
+  // Initialize app
+  useEffect(() => {
+    const initializeApp = async () => {
+      if (!loading) {
+        try {
+          if ('serviceWorker' in navigator) {
+            const registration = await navigator.serviceWorker.getRegistration();
+            if (registration) {
+              // Don't wait for update, just check status
+              registration.update().catch(console.error);
+            }
+          }
+          // Immediately set app as ready
+          setAppReady(true);
+        } catch (error) {
+          console.error('App initialization error:', error);
+          setAppReady(true);
+        }
+      }
+    };
+
+    initializeApp();
+  }, [loading]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -51,13 +75,15 @@ function AppContent() {
 
   // Redirect to landing page if not authenticated
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && navigate) {
       navigate('/');
     }
   }, [user, loading, navigate]);
-
   if (loading) {
     return <Loading message="Initializing app..." />;
+  }
+  if (!appReady) {
+    return <Loading message="Loading application..." />;
   }
 
   return (

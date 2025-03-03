@@ -6,9 +6,8 @@ import { fetchMonthlySummary, updateMonthlySummary } from '../features/summarySl
 import { store } from '../store';
 import { Transaction } from '../types/transaction';
 import { toast } from 'react-toastify';
-
+import { TypeSummary } from '../types/type';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-
 import { RootState } from '../store';
 
 const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
@@ -19,18 +18,39 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
 }) => {
   const dispatch = useDispatch<typeof store.dispatch>();
   const types = useSelector((state: RootState) => state.types.types);
-  const { data, error } = useSelector((state: RootState) => state.summary);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempTypes, setTempTypes] = useState<{ name: string; percentage: number }[]>([]);
+  const [tempTypes, setTempTypes] = useState<TypeSummary[]>([]);
   const [currentMonthTransactions, setCurrentMonthTransactions] = useState<Transaction[]>([]);
   const [modifiedTypes, setModifiedTypes] = useState<{ [key: string]: boolean }>({});
   const [totalError, setTotalError] = useState('');
   const [localBudget, setLocalBudget] = useState<string>('');
+  const { data, error } = useSelector((state: RootState) => state.summary);
+  
+  useEffect(() => {
+    if (types.length) {
+      const currentTypes = data[selectedMonth]?.types;
+      if (!currentTypes?.length) {
+        // Initialize with available types
+        const defaultTypes = types.map(type => ({
+          name: type.name,
+          percentage: 100 / types.length
+        }));
+        setTempTypes(defaultTypes);
+      } else {
+        // Ensure all types are present
+        const updatedTypes = types.map(type => {
+          const existing = currentTypes.find(t => t.name === type.name);
+          return existing || { name: type.name, percentage: 0 };
+        });
+        setTempTypes(updatedTypes);
+      }
+    }
+  }, [data, selectedMonth, types]);
 
   useEffect(() => {
     if (data[selectedMonth]?.types?.length) {
       setTempTypes(data[selectedMonth].types);
-    } else {
+    } else if (types.length) {
       const defaultTypes = types.map(type => ({
         name: type.name,
         percentage: 100 / types.length
@@ -38,11 +58,9 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       setTempTypes(defaultTypes);
     }
   }, [data, selectedMonth, types]);
-
   useEffect(() => {
     dispatch(fetchMonthlySummary({ userId, month: selectedMonth }));
   }, [dispatch, userId, selectedMonth]);
-
   useEffect(() => {
     setCurrentMonthTransactions(
       parentTransactions?.length
@@ -50,13 +68,10 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
         : data[selectedMonth]?.transactions || [],
     );
   }, [parentTransactions, data, selectedMonth]);
-
   useEffect(() => {
     setLocalBudget(data[selectedMonth]?.budget?.toString() ?? '100');
   }, [data, selectedMonth]);
-
   const budget = data[selectedMonth]?.budget ?? 100;
-
   const calculateSpent = (categoryName: string): number => {
     return currentMonthTransactions
       ?.filter(
@@ -66,11 +81,9 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       )
       .reduce((total: number, transaction: Transaction) => total + transaction.amount, 0);
   };
-
   const handleBudgetChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalBudget(e.target.value);
   }, []);
-
   const handleBudgetBlur = useCallback(() => {
     const newValue = Number(localBudget);
     if (!isNaN(newValue) && newValue !== data[selectedMonth]?.budget) {
@@ -87,7 +100,6 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
     }
     setIsEditingBudget(false);
   }, [localBudget, userId, selectedMonth, data]);
-
   const BudgetInput = useMemo(() => (
     <TextField
       type="number"
@@ -103,7 +115,6 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       }}
     />
   ), [localBudget, handleBudgetChange, handleBudgetBlur]);
-
   const handlePercentageChange = (name: string, value: string) => {
     setTempTypes(prevTypes => 
       prevTypes.map(type =>
@@ -111,33 +122,31 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       )
     );
   };
-
   const handleBlur = (name: string) => {
     setModifiedTypes(prev => ({ ...prev, [name]: true }));
   };
-
   const handleUpdateSummary = () => {
     const hasModifiedTypes = Object.values(modifiedTypes).some(modified => modified);
-
+  
     if (!hasModifiedTypes) {
       toast.error('No changes to update');
       return;
     }
-
+  
     const totalModified = tempTypes
       .filter(type => modifiedTypes[type.name])
       .reduce((sum, type) => sum + type.percentage, 0);
-
+  
     const remainingPercentage = 100 - totalModified;
     const unmodifiedTypes = tempTypes.filter(
       type => !modifiedTypes[type.name]
     );
-
+  
     const totalUnmodifiedPercent = unmodifiedTypes.reduce(
       (sum, type) => sum + type.percentage,
       0
     );
-
+  
     let finalTypes = tempTypes.map(type => {
       if (!modifiedTypes[type.name]) {
         const newPercentage = totalUnmodifiedPercent > 0
@@ -147,17 +156,17 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       }
       return type;
     });
-
+  
     const newTotal = finalTypes.reduce((sum, type) => sum + type.percentage, 0);
-
+  
     if (Math.abs(newTotal - 100) > 0.01) {
       setTotalError('The total percentage must be exactly 100%');
       return;
     }
-
+  
     setTotalError('');
     setTempTypes(finalTypes);
-
+  
     dispatch(
       updateMonthlySummary({
         userId,
@@ -172,7 +181,6 @@ const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
       toast.success('Budget summary updated successfully!');
     });
   };
-
   return (
     <Card className={className} sx={{ maxWidth: 600, mx: 'auto' }}>
       <CardContent>

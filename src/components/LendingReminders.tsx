@@ -270,11 +270,13 @@ const LendingReminders = forwardRef((_, ref) => {
               Lending Reminders
             </Typography>
             {lendings.length === 0 ? (
+              // Update the empty state Box component
               <Box 
                 sx={{ 
                   textAlign: 'center', 
                   py: 4,
-                  color: '#666',
+                  color: 'text.secondary',
+                  backgroundColor: 'background.paper',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

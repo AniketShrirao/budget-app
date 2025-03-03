@@ -1,8 +1,7 @@
 export interface TransactionType {
   id: string;
   name: string;
-  user_id?: string;
-  percentage?: number;
+  user_ids: string[];
   created_at?: string;
   updated_at?: string;
 }

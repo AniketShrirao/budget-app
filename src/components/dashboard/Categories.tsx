@@ -24,15 +24,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
 import { addCategory, updateCategory, deleteCategory, fetchCategories } from '../../features/categorySlice';
 import { fetchTypes } from '../../features/typeSlice';
+import { useAuth } from '../../context/AuthContext';
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const auth = useAuth();
+  const userId = auth?.user?.id;
   const categories = useSelector((state: RootState) => state.categories.categories);
   const types = useSelector((state: RootState) => state.types.types);
   
   useEffect(() => {
     dispatch(fetchCategories());
-    dispatch(fetchTypes());
+    if (userId) {
+      dispatch(fetchTypes(userId));
+    }
   }, [dispatch]);
 
   const [open, setOpen] = useState(false);

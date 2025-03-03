@@ -2,9 +2,10 @@
   max-width: 1400px;
   margin: 32px auto;
   padding: 0 24px;
+  background-color: var(--mui-palette-background-default);
 
   .MuiTypography-h4 {
-    color: #111827;
+    color: var(--mui-palette-text-primary);
     font-weight: 600;
     margin-bottom: 32px;
     font-size: 1.875rem;
@@ -24,11 +25,13 @@
   .lending-form {
     width: 100%;
     min-width: 300px;
+    background-color: var(--mui-palette-background-paper);
     
     .MuiFormControl-root {
       width: 100%;
       .MuiInputBase-root {
         width: 100%;
+        color: var(--mui-palette-text-primary);
         &.Mui-focused {
           width: 100%;
         }

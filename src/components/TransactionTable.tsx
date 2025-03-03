@@ -83,12 +83,14 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
       });
     }
   };
-
+  // In the getRowColor function
   const getRowColor = ({ important, recurrence }: { important: boolean; recurrence: string }) => {
-    if (important) return '#FFB6B6';
-    if (recurrence === 'Quarterly') return '#B0C4DE';
-    if (recurrence === 'Monthly') return '#98FB98';
-    if (recurrence === 'Yearly') return '#FFD700';
+    const isDarkMode = theme.palette.mode === 'dark';
+    
+    if (important) return isDarkMode ? '#661717' : '#FFB6B6';
+    if (recurrence === 'Quarterly') return isDarkMode ? '#1a365d' : '#B0C4DE';
+    if (recurrence === 'Monthly') return isDarkMode ? '#1a4731' : '#98FB98';
+    if (recurrence === 'Yearly') return isDarkMode ? '#7c4a03' : '#FFD700';
     return 'transparent';
   };
 
