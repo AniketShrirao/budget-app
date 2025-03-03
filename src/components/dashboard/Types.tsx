@@ -24,8 +24,6 @@ import { RootState, AppDispatch } from '../../store';
 import { addType, updateType, deleteType, fetchTypes } from '../../features/typeSlice';
 import { addTypeToAllSummaries, updateAllSummariesType } from '../../features/summarySlice';
 import { useAuth } from '../../context/AuthContext';
-// Add this after imports
-const DEFAULT_TYPES = ['Needs', 'Wants', 'Investment'];
 
 const Types = () => {
   const dispatch = useDispatch<AppDispatch>();
