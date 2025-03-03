@@ -1,34 +1,38 @@
 .transaction-table {
-  background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 50px auto;
   padding: 20px;
+
+  // Dark theme support
+  background-color: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
 
   .MuiTable-root {
     width: 100%;
   }
 
   .MuiTableHead-root {
-    background: wheat;
-    color: white;
+    background: var(--mui-palette-primary-light);
+    color: var(--mui-palette-text-primary);
   }
 
   .MuiTableCell-root {
     padding: 12px 15px;
     font-size: 1rem;
+    color: var(--mui-palette-text-primary);
   }
 
   .delete-button {
-    background-color: #ff4081;
-    color: white;
+    background-color: var(--mui-palette-error-main);
+    color: var(--mui-palette-error-contrastText);
     font-size: 0.9rem;
     border-radius: 20px;
     padding: 6px 12px;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #c51162;
+      background-color: var(--mui-palette-error-dark);
     }
   }
 
@@ -50,7 +54,7 @@
     }
 
     .MuiTableHead-root {
-      display: none; // Hide table header on small screens
+      display: none;
     }
 
     .MuiTableBody-root {
@@ -59,12 +63,10 @@
       .MuiTableRow-root {
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #ddd;
         padding: 10px;
         border-radius: 10px;
-        background-color: #f9f9f9;
-        border: 0.5px solid rgba(0, 0, 0, 0.5);
+        background-color: var(--mui-palette-background-default);
+        border: 0.5px solid var(--mui-palette-divider);
         margin: 10px;
 
         .MuiTableCell-root {
@@ -73,6 +75,7 @@
           padding: 8px 0;
           text-align: right;
           gap: 10px;
+          border-bottom: 1px solid var(--mui-palette-divider);
 
           &:before {
             content: attr(data-label);

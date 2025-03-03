@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { TextField, Button, Alert, Box, Typography } from '@mui/material';
+import { SignUpFormProps } from '../types/common';
+import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { supabase } from '../lib/supabase';
-import './SignUpForm.scss';
 
-interface SignUpFormProps {
-  onToggleForm: () => void;
-}
+import React, { useState } from 'react';
+
+import './SignUpForm.scss';
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({
@@ -118,4 +117,4 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
   );
 };
 
-export default SignUpForm; 
+export default SignUpForm;

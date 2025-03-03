@@ -1,26 +1,23 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchSummary, updateSummary } from '../lib/db/summary';
+import { SummaryState } from '../types/common';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { updateSummary } from '../lib/db/summary';
 import { RootState } from '../store';
-
-interface SummaryState {
-  data: Record<string, any>; // Stores summary data per month
-  loading: boolean;
-  error: string | null;
-}
+import * as summaryDB from '../lib/db/summary';
 
 const initialState: SummaryState = {
+  status: 'idle',
   data: {},
   loading: false,
   error: null,
+  currentMonth: new Date().getMonth() + 1 + ''
 };
 
 // **Fetch monthly summary**
 export const fetchMonthlySummary = createAsyncThunk(
   'summary/fetchMonthlySummary',
   async ({ userId, month }: { userId: string; month: string }) => {
-    const response = await fetchSummary(userId, month);
-    return { month, summary: response };
-  },
+    return await summaryDB.fetchSummary(userId, month);
+  }
 );
 
 // **Update monthly summary**
@@ -40,10 +37,53 @@ export const updateMonthlySummary = createAsyncThunk(
   },
 );
 
+export const updateAllSummariesType = createAsyncThunk(
+  'summary/updateAllSummariesType',
+  async ({ oldName, newName }: { oldName: string; newName: string }, { getState }) => {
+    const state = getState() as RootState;
+    const summaries = Object.values(state.summary.data);
+    
+    for (const summary of summaries) {
+      const updatedTypes = summary.types.map(type => 
+        type.name === oldName ? { ...type, name: newName } : type
+      );
+      
+      if (summary.user_id && summary.month) {
+        await summaryDB.updateSummary(summary.user_id, summary.month, {
+          ...summary,
+          types: updatedTypes
+        });
+      }
+    }
+  }
+);
+
+export const addTypeToAllSummaries = createAsyncThunk(
+  'summary/addTypeToAllSummaries',
+  async ({ name, userId }: { name: string; userId: string }, { getState }) => {
+    const state = getState() as RootState;
+    const summaries = Object.values(state.summary.data);
+    
+    for (const summary of summaries) {
+      if (!summary.month) continue;
+      
+      const updatedTypes = [...summary.types, { name, percentage: 0 }];
+      await summaryDB.updateSummary(userId, summary.month, {
+        ...summary,
+        types: updatedTypes
+      });
+    }
+  }
+);
+
 const summarySlice = createSlice({
   name: 'summary',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentMonth: (state, action) => {
+      state.currentMonth = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMonthlySummary.pending, (state) => {
@@ -52,7 +92,7 @@ const summarySlice = createSlice({
       })
       .addCase(fetchMonthlySummary.fulfilled, (state, action) => {
         state.loading = false;
-        state.data[action.payload.month] = action.payload.summary;
+        state.data[action.payload.month] = action.payload;
       })
       .addCase(fetchMonthlySummary.rejected, (state, action) => {
         state.loading = false;
@@ -63,7 +103,12 @@ const summarySlice = createSlice({
       })
       .addCase(updateMonthlySummary.fulfilled, (state, action) => {
         state.loading = false;
-        state.data[action.payload.month] = action.payload.summary;
+        state.data[action.payload.month] = {
+          month: action.payload.month,
+          budget: action.payload.summary.budget || {},
+          types: action.payload.summary.types || {},
+          transactions: action.payload.summary.transactions || []
+        };
       })
       .addCase(updateMonthlySummary.rejected, (state, action) => {
         state.loading = false;
@@ -73,4 +118,5 @@ const summarySlice = createSlice({
 });
 
 export const selectSummary = (state: RootState) => state.summary.data;
+export const { setCurrentMonth } = summarySlice.actions;
 export default summarySlice.reducer;

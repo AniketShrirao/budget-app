@@ -1,11 +1,7 @@
+import { Income } from '../../types/common';
 import { supabase } from '../supabase';
 
 // Add Income
-interface Income {
-  amount: number;
-  description?: string;
-  date?: string;
-}
 
 export const addIncome = async (income: Income): Promise<Income[]> => {
   const { data, error } = await supabase.from('income').insert([income]);

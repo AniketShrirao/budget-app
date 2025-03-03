@@ -1,43 +1,30 @@
-import React from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  CartesianGrid,
-} from 'recharts';
+import { BudgetSummaryChartProps } from '../types/common';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import NoDataAvailable from './NoDataAvailable';
 import { Card, CardContent, Typography } from '@mui/material';
-import { DEFAULT_CATEGORIES } from '../lib/db/summary';
+
+import React from 'react';
+
+import NoDataAvailable from './NoDataAvailable';
 
 const COLORS = {
   Allocated: '#4CAF50', // Green for Allocated
   Spent: '#F44336', // Red for Spent
 };
 
-interface BudgetSummaryChartProps {
-  selectedMonth: string;
-}
-
 const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }) => {
-  const transactions = useSelector(
-    (state: RootState) => state.transactions.transactions,
-  );
+  const transactions = useSelector((state: RootState) => state.transactions.transactions);
   const summaryData = useSelector((state: RootState) => state.summary.data);
+  const types = useSelector((state: RootState) => state.types.types);
 
   // Filter transactions for the selected month
   const currentMonthTransactions = transactions.filter(
     (tx) => new Date(tx.date).getMonth() + 1 === Number(selectedMonth),
   );
 
-  const categories = Array.from(
-    new Set(currentMonthTransactions.map((tx) => tx.type)),
-  );
+  // Use available types instead of deriving from transactions
+  const categories = types.map(type => type.name);
 
   if (!categories.length) {
     return (
@@ -52,29 +39,21 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
     );
   }
 
-  // Use default values if summary data is empty
   const budget = summaryData[selectedMonth]?.budget ?? 100;
-  const categoryPercentages = summaryData[selectedMonth]?.categories ?? DEFAULT_CATEGORIES;
+  const typePercentages = summaryData[selectedMonth]?.types ?? 
+    types.map(type => ({ name: type.name, percentage: 100 / types.length }));
 
-  interface ChartData {
-    type: string;
-    Allocated: number;
-    Spent: number;
-  }
-
-  const chartData: ChartData[] = categories.map((type) => {
+  const chartData = categories.map((typeName) => {
     const spent = currentMonthTransactions
-      .filter((tx) => tx.type === type)
+      .filter((tx) => tx.type === typeName)
       .reduce((total, tx) => total + tx.amount, 0);
 
-    // Always use a category from DEFAULT_CATEGORIES if none found
-    const category = categoryPercentages.find((cat: { name: string }) => cat.name === type) 
-      ?? DEFAULT_CATEGORIES.find(cat => cat.name === type)
-      ?? { name: type, percentage: 0 };
+    const typeData = typePercentages.find(t => t.name === typeName) ?? 
+      { name: typeName, percentage: 0 };
 
     return {
-      type,
-      Allocated: Math.round((budget * category.percentage) / 100),
+      type: typeName,
+      Allocated: Math.round((budget * typeData.percentage) / 100),
       Spent: Math.round(spent),
     };
   });

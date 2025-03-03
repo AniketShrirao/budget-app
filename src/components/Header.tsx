@@ -45,6 +45,7 @@ const Header = () => {
     { path: '/summary', label: 'Summary' },
     { path: '/income', label: 'Income' },
     { path: '/lending', label: 'Lending' },
+    { path: '/dashboard', label: 'Dashboard'}
   ];
 
   // Add state for body scroll lock

@@ -1,27 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './App.scss'; // Changed from './index.css' to './App.scss'
+import './App.scss';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { ThemeProvider } from './theme/ThemeProvider';
+import { registerSW } from 'virtual:pwa-register';
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('SW registered:', registration);
-      })
-      .catch(error => {
-        console.log('SW registration failed:', error);
-      });
-  });
-}
+// Register service worker with auto-update
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm('New content available. Reload?')) {
+      updateSW();
+    }
+  },
+  onOfflineReady() {
+    console.log('App ready to work offline');
+  },
+  immediate: true,
+  registerType: 'autoUpdate'
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );

@@ -1,20 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { Lending, LendingState } from '../types/common';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { supabase } from '../lib/supabase';
-
-interface Lending {
-  id: string;
-  borrower: string;
-  amount: number;
-  date: string;
-  period: string;
-  reminderfrequency: string;
-}
-
-interface LendingState {
-  lendings: Lending[];
-  loading: boolean;
-  error: string | null;
-}
 
 const initialState: LendingState = {
   lendings: [],

@@ -10,6 +10,51 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
+        strategies: 'generateSW',
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,json,woff2}'],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [
+            /^\/api\//,
+            /\/#access_token/,  // Exclude auth token URLs
+            /\/#error/,
+            /\/#provider_token/
+          ],
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/bhuwkdzcuyydqponxssf\.supabase\.co\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 24 * 60 * 60
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                },
+                networkTimeoutSeconds: 10
+              }
+            },
+            {
+              urlPattern: /\.(png|jpg|jpeg|svg|gif|ico)$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'images-cache',
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 30 * 24 * 60 * 60
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            }
+          ]
+        },
         manifest: {
           name: 'Budget Tracker',
           short_name: 'BudgetApp',
@@ -36,25 +81,10 @@ export default defineConfig(({ mode }) => {
             }
           ]
         },
-        workbox: {
-          cleanupOutdatedCaches: true,
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-          runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/bhuwkdzcuyydqponxssf\.supabase\.co\/.*/i,
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'supabase-cache',
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 24 * 60 * 60
-                }
-              }
-            }
-          ]
-        },
         devOptions: {
-          enabled: true
+          enabled: true,
+          type: 'module',
+          navigateFallback: '/index.html'
         }
       })
     ],

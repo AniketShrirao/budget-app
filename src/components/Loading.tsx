@@ -1,10 +1,9 @@
-import React from 'react';
-import { CircularProgress, Box, Typography } from '@mui/material';
-import './Loading.scss';
+import { LoadingProps } from '../types/common';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
-interface LoadingProps {
-  message?: string;
-}
+import React from 'react';
+
+import './Loading.scss';
 
 const Loading: React.FC<LoadingProps> = ({ message = 'Loading...' }) => {
   return (

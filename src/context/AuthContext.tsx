@@ -1,18 +1,11 @@
+import { AuthContextType } from '../types/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { useDispatch } from 'react-redux';
 import { fetchTransactions } from '../features/transactionSlice';
 import { AppDispatch } from '../store';
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
-}
+import { typesDB } from '../lib/db/types';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -30,15 +23,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
 
       if (session?.user) {
+        await typesDB.addUserToDefaultTypes(session.user.id);
         dispatch(fetchTransactions());
       }
     };
 
     fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_, session) => {
       if (session?.user) {
-        setUser(session.user || null);
+        setUser(session.user);
         storeUserInLocalStorage(session.user);
         dispatch(fetchTransactions());
       } else {

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { TextField, Button, Alert, Box, Typography, Divider } from '@mui/material';
+import { SignInFormProps } from '../types/common';
+import { Alert, Box, Button, Divider, TextField, Typography } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+
+import React, { useState } from 'react';
+
 import GoogleIcon from '@mui/icons-material/Google';
 import './SignInForm.scss';
-
-interface SignInFormProps {
-  onToggleForm: () => void;
-}
 
 const SignInForm: React.FC<SignInFormProps> = ({ onToggleForm }) => {
   const [email, setEmail] = useState('');
@@ -88,4 +87,4 @@ const SignInForm: React.FC<SignInFormProps> = ({ onToggleForm }) => {
   );
 };
 
-export default SignInForm; 
+export default SignInForm;

@@ -1,29 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { AddLendingFormProps } from '../types/common';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../store';
 import { supabase } from '../lib/supabase';
 import { fetchLendings } from '../features/lendingSlice';
-import {
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  Box,
-} from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
-import './AddLendingForm.scss';
 import { useAuth } from '../context/AuthContext';
-import Loading from '../components/Loading';
 
-interface AddLendingFormProps {
-  onAddLending: () => void;
-}
+import React, { useState, useEffect } from 'react';
+
+import type { AppDispatch } from '../store';
+
+import './AddLendingForm.scss';
+
+import Loading from '../components/Loading';
 
 const AddLendingForm: React.FC<AddLendingFormProps> = ({ onAddLending }) => {
   const dispatch: AppDispatch = useDispatch();

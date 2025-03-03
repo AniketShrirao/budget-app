@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "test": "echo \"Running tests...\"",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "manage-types": "node scripts/manage-types.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -60,12 +61,14 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
     "vite-plugin-pwa": "^0.21.1",
+    "workbox-cli": "^7.3.0",
     "workbox-core": "^7.3.0",
     "workbox-expiration": "^7.3.0",
     "workbox-precaching": "^7.3.0",
     "workbox-routing": "^7.3.0",
     "workbox-strategies": "^7.3.0",
-    "workbox-webpack-plugin": "^7.3.0"
+    "workbox-webpack-plugin": "^7.3.0",
+    "workbox-window": "^7.3.0"
   },
   "husky": {
     "hooks": {

@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts';
+import { ChartData } from '../types/common';
+import { CategoryBreakdownChartProps } from '../types/category';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Card, CardContent, Typography } from '@mui/material';
+import { Transaction } from '../types/transaction';
+
+import React, { useState, useEffect } from 'react';
+
 import NoDataAvailable from './NoDataAvailable';
-import { Transaction } from '../features/transactionSlice';
 
 const COLORS = [
   '#0088FE',
@@ -22,16 +19,6 @@ const COLORS = [
   '#FF4560',
   '#00E396',
 ];
-
-interface CategoryBreakdownChartProps {
-  selectedMonth: string;
-}
-
-interface ChartData {
-  name: string;
-  value: number;
-  active: boolean;
-}
 
 const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   selectedMonth,
@@ -77,6 +64,9 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
         .reduce((total, tx) => total + tx.amount, 0);
 
       return {
+        type: 'expense',
+        Allocated: 0, // Since this is for actual spending breakdown
+        Spent: spent,
         name: category,
         value: spent,
         active: activeCategories[category],

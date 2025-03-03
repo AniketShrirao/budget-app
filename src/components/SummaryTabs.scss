@@ -29,6 +29,10 @@
     justify-content: center;
     align-items: center;
     margin: 20px 0;
+
+    > div {
+      width: 100%;
+    }
   }
 
   .category-breakdown-chart {

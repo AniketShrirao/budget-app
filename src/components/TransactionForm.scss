@@ -1,5 +1,6 @@
 .transaction-form {
-  background-color: #f4f6f9;
+  background-color: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -13,10 +14,26 @@
   .MuiTextField-root {
     width: 100%;
     margin-bottom: 15px;
+    background-color: var(--mui-palette-background-default);
+  }
+
+  .MuiInputLabel-root {
+    color: var(--mui-palette-text-secondary);
+  }
+  
+  .MuiOutlinedInput-root {
+    fieldset {
+      border-color: var(--mui-palette-divider);
+    }
+  }
+
+  .MuiCheckbox-root {
+    color: var(--mui-palette-text-secondary);
   }
 
   label.MuiFormControlLabel-root {
     width: fit-content;
+    color: var(--mui-palette-text-secondary);
   }
 
   .important-checkbox {

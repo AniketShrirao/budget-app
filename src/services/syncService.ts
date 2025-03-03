@@ -1,12 +1,5 @@
+import { SyncQueue } from '../types/common';
 import { supabase } from '../lib/supabase';
-
-interface SyncQueue {
-  id: string;
-  action: 'create' | 'update' | 'delete';
-  table: string;
-  data: any;
-  timestamp: number;
-}
 
 export class SyncService {
   private queue: SyncQueue[] = [];
