@@ -15,17 +15,20 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import './TransactionForm.scss';
-import { Categories } from '../data/categories';
-import { Types } from '../data/types';
-import { categoryTypeMapping } from '../data/categoryTypeMapping';
-import type { Transaction } from '../features/transactionSlice';
+import type { Transaction } from '../types/transaction';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const TransactionForm = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const categories = useSelector((state: RootState) => state.categories.categories);
+  const auth = useAuth();
+  
   const [form, setForm] = useState({
     date: '',
-    category: 'Other',
+    category: '',
     description: '',
     amount: '',
     type: 'Needs',
@@ -37,18 +40,23 @@ const TransactionForm = () => {
     const today = moment().format('YYYY-MM-DD');
     setForm((prevForm) => ({ ...prevForm, date: today }));
   }, []);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-      ...(name === 'category' && {
-        type: categoryTypeMapping[value as keyof typeof categoryTypeMapping] || 'Needs',
-      }),
-    }));
+    setForm((prevForm) => {
+      if (name === 'category') {
+        const selectedCategory = categories.find(cat => cat.title === value);
+        return {
+          ...prevForm,
+          category: value,
+          type: selectedCategory?.type || prevForm.type
+        };
+      }
+      return {
+        ...prevForm,
+        [name]: value
+      };
+    });
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -60,6 +68,7 @@ const TransactionForm = () => {
     }
 
     const transaction: Transaction = {
+      user_id: auth?.user?.id || '',
       id: uuidv4(),
       ...form,
       amount: Number(form.amount),
@@ -89,7 +98,6 @@ const TransactionForm = () => {
       });
     }
   };
-
   return (
     <form
       className="transaction-form"
@@ -112,9 +120,9 @@ const TransactionForm = () => {
         onChange={handleChange}
         required
       >
-        {Categories.map((cat) => (
+        {categories.map((cat) => (
           <MenuItem key={cat.id} value={cat.title}>
-            {cat.title}
+            {cat.title} ({cat.type})
           </MenuItem>
         ))}
       </TextField>
@@ -132,20 +140,6 @@ const TransactionForm = () => {
         onChange={handleChange}
         required
       />
-      <TextField
-        label="Type"
-        select
-        name="type"
-        value={form.type}
-        onChange={handleChange}
-        required
-      >
-        {Object.values(Types).map((type) => (
-          <MenuItem key={type} value={type}>
-            {type}
-          </MenuItem>
-        ))}
-      </TextField>
       <FormControlLabel
         control={
           <Checkbox

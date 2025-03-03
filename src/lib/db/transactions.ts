@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import { Transaction } from '../../features/transactionSlice';
+import { Transaction } from '../../types/transaction';
 
 // Create Transaction Table if it does not exist
 const createTableIfNotExist = async () => {

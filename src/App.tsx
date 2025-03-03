@@ -16,6 +16,7 @@ import Lending from './pages/Lending';
 import Income from './pages/Income';
 import Loading from './components/Loading';
 import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
@@ -87,6 +88,10 @@ function AppContent() {
         <Route 
           path="/income" 
           element={user ? <Income /> : <Navigate to="/" replace />} 
+        />
+        <Route
+          path="/dashboard"
+          element={user? <Dashboard /> : <Navigate to="/" replace />}
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

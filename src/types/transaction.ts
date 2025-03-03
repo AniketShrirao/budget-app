@@ -14,7 +14,7 @@ export interface Transaction {
   status: string;
   important: boolean;
   recurrence: string;
-  user_email: string;
+  user_id: string;
 }
 
 export interface TransactionTableProps {
