@@ -20,12 +20,17 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { fetchCategories } from '../features/categorySlice';
 
 const TransactionForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector((state: RootState) => state.categories.categories);
   const auth = useAuth();
   
+  // Add useEffect to fetch categories
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
   const [form, setForm] = useState({
     date: '',
     category: '',

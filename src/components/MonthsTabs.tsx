@@ -12,6 +12,12 @@ const MonthsTabs = () => {
   const [page, setPage] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
 
+  // Add handler for month change
+  const handleMonthChange = (newMonth: number) => {
+    setSelectedMonth(Number(newMonth));
+    setPage(0); // Reset page to 0 when month changes
+  };
+
   const transactions = useSelector(
     (state: RootState) => state.transactions.transactions,
   );
@@ -28,7 +34,7 @@ const MonthsTabs = () => {
     <Box className="months-tabs">
       <MonthTabs
         selectedMonth={selectedMonth.toString()}
-        onMonthChange={(newMonth) => setSelectedMonth(Number(newMonth))}
+        onMonthChange={(newMonth: string) => handleMonthChange(Number(newMonth))}
       />
       {filteredTransactions.length > 0 ? (
         <TransactionTable
