@@ -24,7 +24,9 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
   const userId = auth?.user?.id;
 
   useEffect(() => {
-    dispatch(fetchTypes(userId));
+    if (userId) {
+      dispatch(fetchTypes(userId));
+    }
   }, [dispatch]);
 
   // Filter transactions for the selected month
