@@ -7,6 +7,7 @@ const NoDataAvailable: React.FC<{ message?: string }> = ({
 }) => {
   return (
     <Box
+      className="no-data-available"
       sx={{
         display: 'flex',
         flexDirection: 'column',

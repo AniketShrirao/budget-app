@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactions } from '../features/transactionSlice';
 import TransactionTable from './TransactionTable';
 import MonthTabs from './MonthTabs';
 import { RootState, AppDispatch } from '../store';
 import './MonthsTabs.scss';
+import NoDataAvailable from './NoDataAvailable';
 
 const MonthsTabs = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -43,14 +44,9 @@ const MonthsTabs = () => {
           setPage={setPage}
         />
       ) : (
-        <Typography
-          padding={5}
-          variant="h6"
-          color="textSecondary"
-          align="center"
-        >
-          No transactions for this month.
-        </Typography>
+        <Box sx={{ p: 3, mt: 2 }}>
+          <NoDataAvailable message="No transactions for this month" />
+        </Box>
       )}
     </Box>
   );
