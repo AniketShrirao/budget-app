@@ -1,6 +1,7 @@
 import { TransactionOverlayProps } from '../types/transaction';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { Button } from '../design-system/components/Button';
 
 // Assuming you have a type for transactions
 

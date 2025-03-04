@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Button } from '@mui/material';
+import { Button } from '../design-system/components/Button';
 import { CSVLink } from 'react-csv';
 import { toast } from 'react-toastify';
+import NoDataAvailable from './NoDataAvailable';
+import { Box } from '@mui/material';
 
 const DownloadTransactions: React.FC<{ selectedMonth: string }> = ({ selectedMonth }) => {
   const transactions = useSelector((state: RootState) => state.transactions.transactions);
@@ -33,6 +35,14 @@ const DownloadTransactions: React.FC<{ selectedMonth: string }> = ({ selectedMon
       style: { background: '#4caf50', color: 'white' }
     });
   };
+
+  if (csvData.length === 0) {
+    return (
+      <Box sx={{ mt: 2 }}>
+        <NoDataAvailable message="No transactions available to download" />
+      </Box>
+    );
+  }
 
   return (
     <Button variant="contained" color="primary" onClick={handleDownload}>

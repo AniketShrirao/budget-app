@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Avatar,
   Paper,
   Grid,
@@ -15,6 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { updateProfile, loadProfile } from '../../features/profileSlice';
+import { Button } from '../../design-system/components/Button';
 
 const Profile = () => {
   const dispatch = useDispatch();

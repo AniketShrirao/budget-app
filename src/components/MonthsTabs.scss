@@ -2,6 +2,13 @@
   padding: 20px 0;
   display: flex;
   width: 70%;
+  
+  .no-data-available {
+    padding-right: 85px;
+    @media screen and (max-width: 768px) {
+      padding-right: 32px;
+    }
+  }
 
   .transaction-table {
     margin: 20px auto;

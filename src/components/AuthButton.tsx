@@ -1,6 +1,8 @@
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+
 import { useAuth } from '../context/AuthContext';
 import './AuthButton.scss';
+import { Button } from '../design-system/components/Button';
 
 const AuthButton = ({ isMobile }: { isMobile: boolean }) => {
   const auth = useAuth();

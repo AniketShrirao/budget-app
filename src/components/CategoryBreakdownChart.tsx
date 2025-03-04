@@ -81,12 +81,12 @@ const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
 
   if (!hasSpentValues) {
     return (
-      <Card style={{ marginTop: '20px' }}>
+      <Card sx={{ marginTop: 2.5, minHeight: '400px' }}>
         <CardContent>
           <Typography variant="h6" align="center" gutterBottom>
             Category-wise Breakdown
           </Typography>
-          <NoDataAvailable />
+          <NoDataAvailable message="No transactions recorded for this month" />
         </CardContent>
       </Card>
     );

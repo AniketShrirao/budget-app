@@ -28,12 +28,12 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
 
   if (!categories.length) {
     return (
-      <Card style={{ marginTop: '20px' }}>
+      <Card sx={{ marginTop: 2.5, minHeight: '400px' }}>
         <CardContent>
           <Typography variant="h6" align="center" gutterBottom>
             Budget Summary
           </Typography>
-          <NoDataAvailable />
+          <NoDataAvailable message="No budget categories defined yet" />
         </CardContent>
       </Card>
     );
@@ -62,17 +62,16 @@ const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }
 
   if (!hasSpentValues) {
     return (
-      <Card style={{ marginTop: '20px' }}>
+      <Card sx={{ marginTop: 2.5, minHeight: '400px' }}>
         <CardContent>
           <Typography variant="h6" align="center" gutterBottom>
             Budget Summary
           </Typography>
-          <NoDataAvailable />
+          <NoDataAvailable message="No spending recorded for this month" />
         </CardContent>
       </Card>
     );
   }
-
   return (
     <Card style={{ marginTop: '20px' }}>
       <CardContent>

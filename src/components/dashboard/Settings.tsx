@@ -7,7 +7,6 @@ import {
   Typography,
   Paper,
   Divider,
-  Button,
   Select,
   MenuItem,
   Alert,
@@ -16,6 +15,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { toggleTheme } from '../../features/themeSlice';
+import { Button } from '../../design-system/components/Button';
 
 const Settings = () => {
   const theme = useTheme();
@@ -137,7 +137,7 @@ const Settings = () => {
       </Paper>
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button 
+        <Button
           variant="contained" 
           color="primary"
           onClick={handleSave}

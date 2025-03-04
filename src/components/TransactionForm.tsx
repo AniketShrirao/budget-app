@@ -7,7 +7,6 @@ import {
 } from '../features/transactionSlice';
 import {
   TextField,
-  Button,
   MenuItem,
   FormControlLabel,
   Checkbox,
@@ -21,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { fetchCategories } from '../features/categorySlice';
+import { Button } from '../design-system/components/Button';
 
 const TransactionForm = () => {
   const dispatch = useDispatch<AppDispatch>();

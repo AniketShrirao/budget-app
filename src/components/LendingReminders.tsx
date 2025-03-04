@@ -266,7 +266,7 @@ const LendingReminders = forwardRef((_, ref) => {
       <Grid item xs={12}>
         <Card elevation={0} className="lending-reminders-card">
           <CardContent>
-            <Typography variant="h6" align="center" gutterBottom>
+            <Typography variant="h4" align="center" gutterBottom>
               Lending Reminders
             </Typography>
             {lendings.length === 0 ? (

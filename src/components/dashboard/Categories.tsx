@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -27,6 +26,7 @@ import { fetchTypes } from '../../features/typeSlice';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { supabase } from '../../lib/supabase';
+import { Button } from '../../design-system/components/Button';
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();

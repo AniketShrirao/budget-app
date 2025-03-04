@@ -1,6 +1,6 @@
 import { Column, HandleDelete, HandleRowClick } from '../types/common';
 import { Transaction, TransactionTableProps } from '../types/transaction';
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, useMediaQuery, useTheme } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactions, removeTransactionFromDB } from '../features/transactionSlice';
 import { AppDispatch, RootState } from '../store';
@@ -14,6 +14,8 @@ import TransactionOverlay from './TransactionOverlay'; // Import TransactionOver
  // Add this import
 
 import './TransactionTable.scss';
+
+import NoDataAvailable from './NoDataAvailable';
 
 const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransactions, page, setPage }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -105,17 +107,17 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ filteredTransaction
 
   if (loading) {
     return (
-      <Typography variant="h6" align="center" color="textSecondary">
-        Loading...
-      </Typography>
+      <Paper sx={{ p: 3 }}>
+        <NoDataAvailable message="Loading transactions..." />
+      </Paper>
     );
   }
 
   if (transactions.length === 0) {
     return (
-      <Typography variant="h6" align="center" color="textSecondary">
-        No transactions available.
-      </Typography>
+      <Paper sx={{ p: 3 }}>
+        <NoDataAvailable message="No transactions available yet" />
+      </Paper>
     );
   }
 

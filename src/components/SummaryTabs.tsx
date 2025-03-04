@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import { Box, Card, CardContent } from '@mui/material';
 import MonthTabs from './MonthTabs';
 import BudgetSummaryTable from './BudgetSummaryTable';
 import BudgetSummaryChart from './BudgetSummaryChart';
@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import './SummaryTabs.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import NoDataAvailable from './NoDataAvailable';
 
 const SummaryTabs = () => {
   const authContext = useAuth();
@@ -27,12 +28,7 @@ const SummaryTabs = () => {
         />
         <Card sx={{ width: '100%', mt: 2 }}>
           <CardContent>
-            <Typography variant="h6" align="center" color="textSecondary">
-              No transactions available for this month.
-            </Typography>
-            <Typography align="center" color="textSecondary">
-              Add transactions to see your budget summary.
-            </Typography>
+            <NoDataAvailable message=" No transactions available for this month. Add transactions to see your budget summary." />
           </CardContent>
         </Card>
       </Box>

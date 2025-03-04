@@ -4,7 +4,6 @@ import {
   DialogTitle, 
   DialogContent, 
   TextField, 
-  Button, 
   Typography,
   Alert,
   Box,
@@ -13,6 +12,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import './AuthModal.scss';
 import { toast } from 'react-toastify';
+import { Button } from '../design-system/components/Button';
 
 const AuthModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [isSignUp, setIsSignUp] = useState(false);

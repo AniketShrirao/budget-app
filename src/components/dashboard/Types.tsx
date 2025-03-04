@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -24,6 +23,7 @@ import { RootState, AppDispatch } from '../../store';
 import { addType, updateType, deleteType, fetchTypes } from '../../features/typeSlice';
 import { addTypeToAllSummaries, updateAllSummariesType } from '../../features/summarySlice';
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../../design-system/components/Button';
 
 const Types = () => {
   const dispatch = useDispatch<AppDispatch>();

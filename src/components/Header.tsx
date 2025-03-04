@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   AppBar, 
-  Toolbar, 
-  Button, 
+  Toolbar,  
   Typography, 
   IconButton, 
   Menu, 
@@ -21,6 +20,7 @@ import { supabase } from '../lib/supabase';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { Button } from '../design-system/components/Button';
 
 const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
