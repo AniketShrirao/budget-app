@@ -1,12 +1,14 @@
 import { BudgetSummaryChartProps } from '../types/common';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
 import { Card, CardContent, Typography } from '@mui/material';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import NoDataAvailable from './NoDataAvailable';
+import { fetchTypes } from '../features/typeSlice';
+import { useAuth } from '../context/AuthContext';
 
 const COLORS = {
   Allocated: '#4CAF50', // Green for Allocated
@@ -14,9 +16,18 @@ const COLORS = {
 };
 
 const BudgetSummaryChart: React.FC<BudgetSummaryChartProps> = ({ selectedMonth }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const transactions = useSelector((state: RootState) => state.transactions.transactions);
   const summaryData = useSelector((state: RootState) => state.summary.data);
   const types = useSelector((state: RootState) => state.types.types);
+  const auth = useAuth();
+  const userId = auth?.user?.id;
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchTypes(userId));
+    }
+  }, [dispatch]);
 
   // Filter transactions for the selected month
   const currentMonthTransactions = transactions.filter(
