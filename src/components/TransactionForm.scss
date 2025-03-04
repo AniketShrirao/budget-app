@@ -1,5 +1,5 @@
 .transaction-form {
-  background-color: var(--mui-palette-background-paper);
+  background-image: var(--Paper-overlay);
   color: var(--mui-palette-text-primary);
   padding: 20px;
   border-radius: 10px;
@@ -14,7 +14,7 @@
   .MuiTextField-root {
     width: 100%;
     margin-bottom: 15px;
-    background-color: var(--mui-palette-background-default);
+    background: var(--mui-palette-background-paper);
   }
 
   .MuiInputLabel-root {
@@ -44,15 +44,15 @@
 
   .submit-button {
     width: 100%;
-    background-color: #673ab7;
-    color: white;
+    background-color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-primary-contrastText);
     font-size: 1.1rem;
     padding: 12px;
     border-radius: 30px;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #512da8;
+      background-color: var(--mui-palette-primary-dark);
     }
   }
 }

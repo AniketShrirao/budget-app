@@ -1,10 +1,11 @@
 .landing-page {
-  min-height: calc(100vh - 64px); // Subtract header height
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 24px;
+  background-color: var(--mui-palette-background-default);
 
   .auth-container {
     width: 100%;
@@ -13,27 +14,27 @@
 
   .intro {
     .title {
-      color: #1A1A1A;
+      color: var(--mui-palette-text-primary);
       margin-bottom: 24px;
     }
 
     .description {
-      color: #4B5563;
+      color: var(--mui-palette-text-secondary);
       max-width: 600px;
       margin: 0 auto;
     }
   }
 
   .sign-in-button {
-    background-color: #ff4081;
-    color: white;
+    background-color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-primary-contrastText);
     font-size: 1.2rem;
     padding: 15px 30px;
     border-radius: 30px;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #c51162;
+      background-color: var(--mui-palette-primary-dark);
     }
   }
 

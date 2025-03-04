@@ -19,12 +19,15 @@ import AuthModal from './AuthModal';
 import './Header.scss';
 import { supabase } from '../lib/supabase';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const auth = useAuth();
   const navigate = useNavigate();
+  const profile = useSelector((state: RootState) => state.profile);
 
   // Get user display name or email
   const userDisplay = auth?.user?.user_metadata?.full_name || auth?.user?.email || '';
@@ -158,8 +161,8 @@ const Header = () => {
                   </IconButton>
                   {auth?.user && (
                     <Box className="mobile-user-info">
-                      <Avatar className="user-avatar">
-                        {userDisplay.charAt(0).toUpperCase()}
+                      <Avatar className="user-avatar" src={profile.avatar}>
+                        {!profile.avatar && userDisplay.charAt(0).toUpperCase()}
                       </Avatar>
                       <Typography className="user-name">
                         {userDisplay}
@@ -227,8 +230,8 @@ const Header = () => {
           {/* Desktop User Section - only when logged in */}
           {auth?.user && (
             <Box className="user-section">
-              <Avatar className="user-avatar">
-                {userDisplay.charAt(0).toUpperCase()}
+              <Avatar className="user-avatar" src={profile.avatar}>
+                {!profile.avatar && userDisplay.charAt(0).toUpperCase()}
               </Avatar>
               <Typography className="user-name">
                 {userDisplay}
