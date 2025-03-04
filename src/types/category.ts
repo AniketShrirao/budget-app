@@ -8,6 +8,7 @@ export interface Category {
   is_default?: boolean;
   user_id: string;
   created_at?: string;
+  has_transactions?: boolean; // Add this field
 }
 
 export interface CategoryBreakdownChartProps {

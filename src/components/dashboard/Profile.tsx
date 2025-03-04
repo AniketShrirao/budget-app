@@ -12,36 +12,34 @@ import {
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { updateProfile, loadProfile } from '../../features/profileSlice';
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const profile = useSelector((state: RootState) => state.profile);
   const auth = useAuth();
   const user = auth?.user;
-  const [profile, setProfile] = useState({
-    displayName: user?.email?.split('@')[0] || '',
-    email: user?.email || '',
-    avatar: '',
-    phone: '',
-    currency: 'INR',
-    bio: ''
-  });
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     // Load saved profile data
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) {
-      setProfile(prev => ({
-        ...prev,
-        ...JSON.parse(savedProfile)
+      const parsedProfile = JSON.parse(savedProfile);
+      dispatch(loadProfile(parsedProfile));
+    } else {
+      // Initialize with default values
+      dispatch(updateProfile({
+        displayName: user?.email?.split('@')[0] || '',
+        email: user?.email || '',
       }));
     }
-  }, []);
+  }, [dispatch, user]);
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setProfile(prev => ({
-      ...prev,
-      [field]: event.target.value
-    }));
+    dispatch(updateProfile({ [field]: event.target.value }));
   };
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,10 +47,7 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile(prev => ({
-          ...prev,
-          avatar: reader.result as string
-        }));
+        dispatch(updateProfile({ avatar: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }

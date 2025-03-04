@@ -5,6 +5,7 @@ import lendingReducer from '../features/lendingSlice';
 import categoryReducer from '../features/categorySlice';
 import typeReducer from '../features/typeSlice';
 import themeReducer from '../features/themeSlice';
+import profileReducer from '../features/profileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     lendings: lendingReducer,
     categories: categoryReducer,
     types: typeReducer,
-    theme: themeReducer
+    theme: themeReducer,
+    profile: profileReducer,
   },
 });
 

@@ -25,6 +25,8 @@ import { RootState, AppDispatch } from '../../store';
 import { addCategory, updateCategory, deleteCategory, fetchCategories } from '../../features/categorySlice';
 import { fetchTypes } from '../../features/typeSlice';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
+import { supabase } from '../../lib/supabase';
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -96,20 +98,45 @@ const Categories = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      try {
-        await dispatch(deleteCategory(id)).unwrap();
-        setShowAlert({ show: true, message: 'Category deleted successfully!', type: 'success' });
-      } catch (error) {
-        setShowAlert({ 
-          show: true, 
-          message: 'Error deleting category. Please try again.', 
-          type: 'error' 
-        });
+    try {
+      // Get category title first
+      const categoryToDelete = categories.find(cat => cat.id === id);
+      if (!categoryToDelete) {
+        toast.error('Category not found');
+        return;
       }
+
+      // Check for linked transactions using category title
+      const { data: linkedTransactions, error: txError } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('category', categoryToDelete.title);
+
+      if (txError) throw txError;
+
+      if (linkedTransactions && linkedTransactions.length > 0) {
+        toast.error(`Cannot delete category: ${linkedTransactions.length} transaction(s) are using this category. Please update or delete those transactions first.`, { autoClose: 5000 });
+        return;
+      }
+
+      if (window.confirm('Are you sure you want to delete this category?')) {
+        try {
+          await dispatch(deleteCategory(id)).unwrap();
+          setShowAlert({ show: true, message: 'Category deleted successfully!', type: 'success' });
+        } catch (error) {
+          setShowAlert({ 
+            show: true, 
+            message: 'Error deleting category. Please try again.', 
+            type: 'error' 
+          });
+        }
+      }
+    } catch (error) {
+      toast.error('Error checking category usage. Please try again.');
     }
   };
 
+  // Update the ListItem to show disabled delete button if category has transactions
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
@@ -153,7 +180,16 @@ const Categories = () => {
                 <IconButton onClick={() => handleOpen(category)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton onClick={() => handleDelete(category.id)}>
+                <IconButton 
+                  onClick={() => handleDelete(category.id)}
+                  disabled={category.has_transactions}
+                  sx={{
+                    '&.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.26)',
+                      cursor: 'not-allowed'
+                    }
+                  }}
+                >
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
