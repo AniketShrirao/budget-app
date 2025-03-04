@@ -1,16 +1,51 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import NoDataImage from '../assets/no-data.svg'; // You'll need to add this SVG
 
-const NoDataAvailable: React.FC = () => {
+const NoDataAvailable: React.FC<{ message?: string }> = ({ 
+  message = "No data available yet" 
+}) => {
   return (
-    <Typography
-      variant="h6"
-      align="center"
-      color="textSecondary"
-      style={{ marginTop: '20px' }}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 4,
+        gap: 2
+      }}
     >
-      No data available
-    </Typography>
+      <img 
+        src={NoDataImage} 
+        alt="No data" 
+        style={{ 
+          width: '200px',
+          height: 'auto',
+          opacity: 0.7
+        }} 
+      />
+      <Typography
+        variant="h6"
+        color="text.secondary"
+        sx={{
+          fontWeight: 500,
+          textAlign: 'center'
+        }}
+      >
+        {message}
+      </Typography>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          textAlign: 'center',
+          maxWidth: '300px'
+        }}
+      >
+        Add some transactions to see your data visualization here
+      </Typography>
+    </Box>
   );
 };
 

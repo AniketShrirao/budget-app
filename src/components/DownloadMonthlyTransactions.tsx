@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Button } from '@mui/material';
+import { Button } from '../design-system/components/Button';
 import { CSVLink } from 'react-csv';
 import { toast } from 'react-toastify';
 

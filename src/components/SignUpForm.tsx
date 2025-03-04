@@ -1,10 +1,11 @@
 import { SignUpFormProps } from '../types/common';
-import { Alert, Box, Button, TextField, Typography } from '@mui/material';
+import { Alert, Box, TextField, Typography } from '@mui/material';
 import { supabase } from '../lib/supabase';
 
 import React, { useState } from 'react';
 
 import './SignUpForm.scss';
+import { Button } from '../design-system/components/Button';
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({

@@ -1,11 +1,12 @@
 import { SignInFormProps } from '../types/common';
-import { Alert, Box, Button, Divider, TextField, Typography } from '@mui/material';
+import { Alert, Box, Divider, TextField, Typography } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
 import React, { useState } from 'react';
 
 import GoogleIcon from '@mui/icons-material/Google';
 import './SignInForm.scss';
+import { Button } from '../design-system/components/Button';
 
 const SignInForm: React.FC<SignInFormProps> = ({ onToggleForm }) => {
   const [email, setEmail] = useState('');
@@ -53,7 +54,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onToggleForm }) => {
           required
           margin="normal"
         />
-        <Button 
+        <Button
           type="submit" 
           variant="contained" 
           color="primary" 

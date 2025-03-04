@@ -1,5 +1,5 @@
 import { BudgetSummaryTableProps } from '../types/common';
-import { Alert, Box, Button, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Alert, Box, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMonthlySummary, updateMonthlySummary } from '../features/summarySlice';
@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { TypeSummary } from '../types/type';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { RootState } from '../store';
+import { Button } from '../design-system/components/Button';
 
 const BudgetSummaryTable: React.FC<BudgetSummaryTableProps> = ({
   className,
