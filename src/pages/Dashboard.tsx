@@ -12,11 +12,13 @@ import Profile from '../components/dashboard/Profile';
 import Settings from '../components/dashboard/Settings';
 import Categories from '../components/dashboard/Categories';
 import Types from '../components/dashboard/Types';
+import './Dashboard.scss';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  className: string;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -32,6 +34,13 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+const DASHBOARD_TABS = [
+  { label: "Profile", component: <Profile /> },
+  { label: "Settings", component: <Settings /> },
+  { label: "Categories", component: <Categories /> },
+  { label: "Types", component: <Types /> }
+];
+
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const theme = useTheme();
@@ -41,7 +50,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container className='dashboard' maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Paper 
         elevation={3}
         sx={{
@@ -63,25 +72,17 @@ const Dashboard = () => {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Profile" />
-            <Tab label="Settings" />
-            <Tab label="Categories" />
-            <Tab label="Types" />
+            {DASHBOARD_TABS.map((tab, index) => (
+              <Tab key={index} label={tab.label} />
+            ))}
           </Tabs>
         </Box>
 
-        <TabPanel value={activeTab} index={0}>
-          <Profile />
-        </TabPanel>
-        <TabPanel value={activeTab} index={1}>
-          <Settings />
-        </TabPanel>
-        <TabPanel value={activeTab} index={2}>
-          <Categories />
-        </TabPanel>
-        <TabPanel value={activeTab} index={3}>
-          <Types />
-        </TabPanel>
+        {DASHBOARD_TABS.map(({ label, component }, index) => (
+          <TabPanel key={index} value={activeTab} index={index} className={`tab-panel-${label.toLowerCase()}`}>
+            {component}
+          </TabPanel>
+        ))}
       </Paper>
     </Container>
   );

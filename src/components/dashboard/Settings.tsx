@@ -81,13 +81,14 @@ const Settings = () => {
         />
         <Divider sx={{ my: 2 }} />
         <FormControlLabel
+          disabled
           control={
             <Switch
               checked={settings.pushNotifications}
               onChange={handleChange('pushNotifications')}
             />
           }
-          label="Push Notifications"
+          label="Push Notifications (Coming Soon)"
         />
         <Divider sx={{ my: 2 }} />
         <FormControlLabel
@@ -104,7 +105,7 @@ const Settings = () => {
       <Typography variant="h6" gutterBottom>
         Preferences
       </Typography>
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: 3, mb: 3, opacity: 0.6 }}>
         <FormControl fullWidth sx={{ mb: 2 }}>
           <Typography variant="subtitle2" gutterBottom>
             Currency
@@ -112,6 +113,7 @@ const Settings = () => {
           <Select
             value={settings.currency}
             onChange={handleChange('currency')}
+            disabled
           >
             <MenuItem value="USD">USD ($)</MenuItem>
             <MenuItem value="EUR">EUR (€)</MenuItem>
@@ -127,6 +129,7 @@ const Settings = () => {
           <Select
             value={settings.language}
             onChange={handleChange('language')}
+            disabled
           >
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="es">Spanish</MenuItem>
@@ -134,6 +137,9 @@ const Settings = () => {
             <MenuItem value="de">German</MenuItem>
           </Select>
         </FormControl>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+          These features are coming soon
+        </Typography>
       </Paper>
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
