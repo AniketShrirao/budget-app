@@ -122,13 +122,12 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
 
           <Box 
             className="message-container"
-            ref={messagesEndRef}
             sx={{ 
               flex: 1, 
               overflowY: 'auto', 
               p: 2,
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'column', // Change to column-reverse
               gap: 1
             }}
           >
@@ -136,56 +135,69 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
               <Box
                 key={index}
                 sx={{
-                  alignSelf: msg.isUser ? 'flex-end' : 'flex-start',
-                  bgcolor: msg.isUser ? 'primary.main' : 'grey.100',
-                  color: msg.isUser ? 'white' : 'text.primary',
-                  p: 1.5,
-                  borderRadius: 2,
-                  maxWidth: '80%',
-                  whiteSpace: 'pre-line'
+                  display: 'flex',
+                  justifyContent: msg.isUser ? 'flex-end' : 'flex-start',
+                  mb: 1
                 }}
               >
-                <Typography variant="body2">{msg.text}</Typography>
-                {index === 0 && (
-                  <Box className="quick-actions">
-                    <Button
-                      variant="outlined" 
-                      size="small" 
-                      className="action-button"
-                      onClick={() => setInputValueAndSend("add transaction")}
-                    >
-                      Add Transaction
-                    </Button>
-                    <Button 
-                      variant="outlined" 
-                      size="small" 
-                      className="action-button"
-                      onClick={() => setInputValueAndSend("show balance")}
-                    >
-                      Check Balance
-                    </Button>
-                    <Button 
-                      variant="outlined" 
-                      size="small" 
-                      className="action-button"
-                      onClick={() => setInputValueAndSend("show summary")}
-                    >
-                      View Summary
-                    </Button>
-                    <Button 
-                      variant="outlined" 
-                      size="small" 
-                      className="action-button"
-                      onClick={() => setInputValueAndSend("budget help")}
-                    >
-                      Budget Help
-                    </Button>
-                  </Box>
-                )}
+                <Box
+                  sx={{
+                    bgcolor: msg.isUser ? 'primary.main' : 'grey.100',
+                    color: msg.isUser ? 'white' : 'text.primary',
+                    p: 1.5,
+                    borderRadius: 2,
+                    maxWidth: '80%',
+                    whiteSpace: 'pre-line'
+                  }}
+                >
+                  <Typography variant="body2">{msg.text}</Typography>
+                  {!msg.isUser && (
+                    index === messages.length - 1 &&
+                    (msg.text.toLowerCase().includes('how can i help you') ||
+                    msg.text.toLowerCase().includes('i can help you with'))
+                ) && (
+                    <>
+                      <Box className="quick-actions">
+                      <Button
+                        variant="outlined" 
+                        size="small" 
+                        className="action-button"
+                        onClick={() => setInputValueAndSend("add transaction")}
+                      >
+                        Add Transaction
+                      </Button>
+                      <Button 
+                        variant="outlined" 
+                        size="small" 
+                        className="action-button"
+                        onClick={() => setInputValueAndSend("show balance")}
+                      >
+                        Check Balance
+                      </Button>
+                      <Button 
+                        variant="outlined" 
+                        size="small" 
+                        className="action-button"
+                        onClick={() => setInputValueAndSend("show summary")}
+                      >
+                        View Summary
+                      </Button>
+                      <Button 
+                        variant="outlined" 
+                        size="small" 
+                        className="action-button"
+                        onClick={() => setInputValueAndSend("budget help")}
+                      >
+                        Budget Help
+                      </Button>
+                    </Box>
+                    </>
+                  )}
+                </Box>
               </Box>
             ))}
+            <div ref={messagesEndRef} />
           </Box>
-
           <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
             <IconButton 
               color={listening ? "error" : "primary"} 

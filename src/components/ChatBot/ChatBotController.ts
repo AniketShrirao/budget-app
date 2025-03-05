@@ -47,6 +47,7 @@ export const useChatController = () => {
 
   const handleVoiceInput = useCallback(() => {
     try {
+        console.log('handleVoiceInput called', );
       // Create a state variable to track listening status
       const isCurrentlyListening = SpeechRecognition.browserSupportsSpeechRecognition() && !isProcessing;
 
@@ -63,12 +64,18 @@ export const useChatController = () => {
       setMessages(prev => [...prev, { text: CHAT_RESPONSES.ERROR, isUser: false }]);
     }
   }, []);
-
-  // Add scroll effect for messages
+  // Update the scroll effect to be more reliable
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      // Add a small delay to ensure DOM updates are complete
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end'
+        });
+      }, 100);
+    }
   }, [messages]);
-
   return {
     isOpen,
     setIsOpen,

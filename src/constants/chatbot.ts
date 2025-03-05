@@ -40,7 +40,7 @@ Would you like me to help you with anything specific?`,
 
 export const VOICE_COMMANDS = {
   ACTIVATE: ['hey jarvis', 'hi jarvis', 'hello jarvis', 'jarvis'],
-  TURN_ON_MIC: ['turn on mic', 'start listening', 'start mic', 'listen', 'wake up'],
+  TURN_ON_MIC: ['turn on mic', 'start listening', 'start mic', 'start', 'wake up'],
   TURN_OFF: ['turn off mic', 'stop listening', 'stop mic', 'pause', 'close chat', 'goodbye', 'bye jarvis'],
   SEND_MESSAGE: ['send', 'send message', 'submit', 'send this']
 };

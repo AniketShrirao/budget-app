@@ -1,47 +1,48 @@
 import { CHAT_COMMANDS, VOICE_COMMANDS, CHAT_RESPONSES } from '../constants/chatbot';
 
-export const processVoiceCommand = (
-  transcript: string,
-  handlers: {
-    handleMicToggle: () => void;
-    handleClose: () => void;
-    handleSend: (message: string) => void;
+export const processCommand = (
+  input: string,
+  handlers?: {
+    handleMicToggle?: () => void;
+    handleClose?: () => void;
+    handleSend?: (message: string) => void;
   }
-): string | null => {
-  const text = transcript.toLowerCase().trim();
+): string => {
+  const text = input.toLowerCase().trim();
   
-  // Check for send command first
-  if (VOICE_COMMANDS.SEND_MESSAGE.some(cmd => text.includes(cmd))) {
-    // Remove the send command words from the text
-    const cleanText = text
-      .replace(/send|submit|send message/gi, '')
-      .trim();
-    if (cleanText) {
-      handlers.handleSend(cleanText);
+  // Handle voice-specific commands if handlers are provided
+  if (handlers) {
+    // Check for send command first
+    if (VOICE_COMMANDS.SEND_MESSAGE.some(cmd => text.includes(cmd))) {
+      const cleanText = text
+        .replace(/send|submit|send message/gi, '')
+        .trim();
+      if (cleanText && handlers.handleSend) {
+        handlers.handleSend(cleanText);
+      }
+      return '';
     }
-    return null;
+
+    // Check for mic toggle commands
+    if (VOICE_COMMANDS.TURN_ON_MIC.some(cmd => text.includes(cmd))) {
+      handlers.handleMicToggle?.();
+      return CHAT_RESPONSES.MIC_ON;
+    }
+
+    // Check for turn off commands
+    if (VOICE_COMMANDS.TURN_OFF.some(cmd => text.includes(cmd))) {
+      handlers.handleClose?.();
+      return CHAT_RESPONSES.CLOSING;
+    }
   }
 
-  // Check for mic toggle commands
-  if (VOICE_COMMANDS.TURN_ON_MIC.some(cmd => text.includes(cmd))) {
-    handlers.handleMicToggle();
-    return CHAT_RESPONSES.MIC_ON;
-  }
-
-  // Check for turn off commands
-  if (VOICE_COMMANDS.TURN_OFF.some(cmd => text.includes(cmd))) {
-    handlers.handleClose();
-    return CHAT_RESPONSES.CLOSING;
-  }
-  // For any other speech, just return the text to update input value
-  return text;
-};
-
-export const processCommand = (input: string): string => {
-  const input_lower = input.toLowerCase().trim();
-  
+  // Process chat commands
   for (const { command, response } of Object.values(CHAT_COMMANDS)) {
-    if (command.some(cmd => input_lower.includes(cmd))) {
+    if (command.some(cmd => text.includes(cmd))) {
+      if (handlers?.handleSend) {
+        handlers.handleSend(text);
+        return '';
+      }
       return response;
     }
   }
