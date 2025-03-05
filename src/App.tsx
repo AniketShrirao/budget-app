@@ -21,6 +21,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { InstallPrompt } from './components/InstallPrompt';
+import 'regenerator-runtime/runtime';
+import ChatBot from './components/ChatBot/ChatBot';
 
 const AppContent = () => {
   const auth = useAuth();
@@ -128,28 +130,29 @@ const AppContent = () => {
 export default function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AppContent />
-        <InstallPrompt />
-        <ToastContainer
-          position="bottom-center"
-          autoClose={500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-          toastStyle={{
-            backgroundColor: '#1a1a1a',
-            color: 'white',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          }}
-        />
-      </AuthProvider>
+        <AuthProvider>
+          <AppContent />
+          <InstallPrompt />
+          <ChatBot />
+          <ToastContainer
+            position="bottom-center"
+            autoClose={500}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            toastStyle={{
+              backgroundColor: '#1a1a1a',
+              color: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            }}
+          />
+        </AuthProvider>
     </Router>
   );
 }
