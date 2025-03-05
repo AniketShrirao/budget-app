@@ -3,8 +3,15 @@ import { useChatController } from './ChatBotController';
 import { ChatBotUI } from './ChatBotUI';
 import { processCommand } from '../../utils/chatHandlers';
 import { useEffect, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const ChatBot = () => {
+  const auth = useAuth();
+
+  // Return null if user is not authenticated
+  if (!auth?.user) {
+    return null;
+  }
   const {
     isOpen,
     setIsOpen,
