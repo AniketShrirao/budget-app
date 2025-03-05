@@ -21,6 +21,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { InstallPrompt } from './components/InstallPrompt';
+import 'regenerator-runtime/runtime';
+import ChatBot from './components/ChatBot/ChatBot';
 
 const AppContent = () => {
   const auth = useAuth();
@@ -121,6 +123,7 @@ const AppContent = () => {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {user && <ChatBot />} {/* Only render ChatBot for authenticated users */}
     </Layout>
   );
 }
