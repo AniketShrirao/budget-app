@@ -140,10 +140,12 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
             sx={{ 
               flex: 1, 
               overflowY: 'auto', 
+              overflowX: 'hidden',
               p: 2,
               display: 'flex',
               flexDirection: 'column',
-              gap: 1
+              gap: 1,
+              scrollBehavior: 'smooth'
             }}
           >
             {messages.map((msg, index) => {
@@ -217,7 +219,7 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
                 </Box>
               );
             })}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} style={{ float: 'left', clear: 'both' }} />
           </Box>
 
           <Box sx={{ p: 2, display: 'flex', gap: 1 }}>

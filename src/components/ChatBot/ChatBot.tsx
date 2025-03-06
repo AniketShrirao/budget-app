@@ -45,10 +45,25 @@ const ChatBot = () => {
     handleSend,
     handleVoiceInput
   } = useChatController(listening, setIsExplicitlyStopped);
-
+  // Add scroll effect
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    };
+  // Call immediately and after a short delay to ensure content is rendered
+  scrollToBottom();
+  const timeoutId = setTimeout(scrollToBottom, 100);
+  return () => clearTimeout(timeoutId);
+  }, [messages, isProcessing]); // Add isProcessing to dependencies to scroll after bot responses
   const handleClose = useCallback(() => {
     setIsOpen(false);
-    setIsListeningForActivation(true);
+    setIsListeningForActivation(false);
     setIsProcessing(false);
     SpeechRecognition.stopListening();
     setIsExplicitlyStopped(true);
@@ -70,7 +85,7 @@ const ChatBot = () => {
       handleMicToggle: () => {
         handleVoiceInput();
         setIsExplicitlyStopped(true);
-        setMessages(prev => [...prev, { text: CHAT_RESPONSES.MIC_OFF, isUser: false }]);
+        // Remove the setMessages here since it's handled in handleVoiceInput
       },
       handleClose,
       handleSend
