@@ -22,6 +22,7 @@ interface ChatBotUIProps {
   onInputChange: (value: string) => void;
   onVoiceInput: () => void;
   setInputValueAndSend: (value: string) => void;
+  onActivationIndicatorClick: () => void;
 }
 
 export const ChatBotUI: React.FC<ChatBotUIProps> = ({
@@ -39,7 +40,8 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
   onSend,
   onInputChange,
   onVoiceInput,
-  setInputValueAndSend
+  setInputValueAndSend,
+  onActivationIndicatorClick
 }) => {
   const theme = useTheme();
 
@@ -67,9 +69,10 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
           >
             <ChatIcon />
           </Fab>
-          {isListeningForActivation && (
+          {(
             <Box
               className="chatbot-activation-indicator"
+              onClick={onActivationIndicatorClick}
               sx={{
                 position: 'fixed',
                 bottom: 80,
@@ -79,12 +82,16 @@ export const ChatBotUI: React.FC<ChatBotUIProps> = ({
                 color: 'white',
                 borderRadius: 2,
                 zIndex: theme.zIndex.drawer + 1,
-                display: 'flex',
+                display:  'flex',
                 alignItems: 'center',
-                gap: 1
+                gap: 1,
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: 'rgba(0, 0, 0, 0.7)'
+                }
               }}
             >
-              <Mic sx={{ color: listening ? '#f44336' : 'white' }} />
+              <Mic sx={{ color: (listening || isListeningForActivation) ? '#f44336' : 'white' }} />
               Say "Hey Jarvis"
             </Box>
           )}

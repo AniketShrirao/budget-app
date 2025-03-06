@@ -5,7 +5,7 @@ import { processCommand } from '../../utils/chatHandlers';
 import { useEffect, useCallback, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ChatMessage } from '../../types/chatbot';
-import {  CHAT_RESPONSES } from '../../constants/chatbot';
+import {  CHAT_RESPONSES, SPEECH_RECOGNITION_CONFIG } from '../../constants/chatbot';
 import SpeechRecognition from 'react-speech-recognition';
 
 const ChatBot = () => {
@@ -106,8 +106,21 @@ const ChatBot = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, handleClose]);
 
+const handleActivationIndicatorClick = useCallback(() => {
+  if (listening) {
+    setIsListeningForActivation(false);
+    setIsExplicitlyStopped(true);
+    SpeechRecognition.stopListening();
+  } else {
+    setIsListeningForActivation(true);
+    setIsExplicitlyStopped(false);
+    SpeechRecognition.startListening(SPEECH_RECOGNITION_CONFIG);
+  }
+}, [listening]);
+
   return (
     <ChatBotUI
+      onActivationIndicatorClick={() => handleActivationIndicatorClick()}
       isOpen={isOpen}
       messages={messages}
       inputValue={inputValue}

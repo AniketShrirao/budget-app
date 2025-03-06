@@ -76,7 +76,7 @@ export const useChatController = (
           behavior: 'smooth',
           block: 'end'
         });
-      }, 100);
+      }, 0);
     }
   }, [messages]);
   return {

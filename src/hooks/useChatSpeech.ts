@@ -49,6 +49,7 @@ export const useChatSpeech = (
       setIsSpeechInitialized(true);
     }
   }, [browserSupportsSpeechRecognition, isSpeechInitialized]);
+
   // Handle listening state changes
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
@@ -58,8 +59,10 @@ export const useChatSpeech = (
         setIsStartingListening(true);
         try {
           await SpeechRecognition.startListening(SPEECH_RECOGNITION_CONFIG);
+          setMessages((prev: Array<{ text: string; isUser: boolean }>) => [...prev, { text: CHAT_RESPONSES.MIC_ON, isUser: false }]);
         } catch (error) {
           console.error('Failed to start listening:', error);
+          setMessages((prev: Array<{ text: string; isUser: boolean }>) => [...prev, { text: CHAT_RESPONSES.ERROR, isUser: false }]);
         } finally {
           setIsStartingListening(false);
         }
@@ -81,8 +84,10 @@ export const useChatSpeech = (
     listening,
     isStartingListening,
     isExplicitlyStopped,
-    isListeningForActivation
+    isListeningForActivation,
+    setMessages
   ]);
+
   return {
     transcript,
     listening,
