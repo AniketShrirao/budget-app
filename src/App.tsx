@@ -23,6 +23,7 @@ import React from 'react';
 import { InstallPrompt } from './components/InstallPrompt';
 import 'regenerator-runtime/runtime';
 import ChatBot from './components/ChatBot/ChatBot';
+import useDetectRefresh from './hooks/useDetectRefresh';
 
 const AppContent = () => {
   const auth = useAuth();
@@ -30,9 +31,10 @@ const AppContent = () => {
   const loading = auth?.loading;
   const navigate = useNavigate();
   const location = useLocation();
-  const loginToastShown = React.useRef(false);
   const isInitialMount = React.useRef(true);
   const [appReady, setAppReady] = React.useState(false);
+  const [hasShownToast, setHasShownToast] = React.useState(false);
+  const isRefreshed = useDetectRefresh();
   // Initialize app
   useEffect(() => {
     const initializeApp = async () => {
@@ -62,19 +64,17 @@ const AppContent = () => {
       isInitialMount.current = false;
       return;
     }
+  if (!loading && user && location.pathname === '/transactions' && !hasShownToast && !isRefreshed) {
+    toast.success('Successfully logged in!', {
+      style: { background: '#4caf50', color: 'white' }
+    });
 
-    if (!loading && user && location.pathname === '/transactions' && !loginToastShown.current) {
-      toast.success('Successfully logged in!', {
-        style: { background: '#4caf50', color: 'white' }
-      });
-      loginToastShown.current = true;
-    }
-
-    if (!user) {
-      loginToastShown.current = false;
-    }
-  }, [user, loading, location.pathname]);
-
+    setHasShownToast(true);
+  }
+  if (!user) {
+    setHasShownToast(false);
+  }
+  }, [user, loading, location.pathname, hasShownToast, isRefreshed]);
   // Redirect to landing page if not authenticated
   useEffect(() => {
     if (!loading && !user && navigate) {
